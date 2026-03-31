@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatToronto, TORONTO_TZ } from "@/lib/utils";
 import { toZonedTime } from "date-fns-tz";
 import { format } from "date-fns";
-import { ScanLine, Keyboard, Camera, ChevronDown } from "lucide-react";
+import { ScanLine, Keyboard, Camera, ChevronDown, Users, Ticket } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const QRScanner = dynamic(
@@ -24,6 +24,8 @@ interface Event {
   startTime: string;
   endTime: string;
   location?: string | null;
+  capacity?: number | null;
+  _count?: { attendances: number; rsvps: number };
 }
 
 type ScanResultData = {
@@ -73,6 +75,10 @@ export default function ScanPage() {
         const data = await res.json();
         if (res.ok) {
           setResult({ type: "success", message: "Attendance registered!", user: data.user, event: data.event });
+          // Refresh event counts
+          const toronto = toZonedTime(new Date(), TORONTO_TZ);
+          const dateStr = format(toronto, "yyyy-MM-dd");
+          fetch(`/api/events?date=${dateStr}`).then((r) => r.json()).then(setEvents);
         } else {
           const type = data.code === "OVERLAP_CONFLICT" ? "overlap" : data.code === "TOO_EARLY" ? "too-early" : "error";
           setResult({ type, message: data.error ?? "Registration failed." });
@@ -112,6 +118,32 @@ export default function ScanPage() {
               <p className="text-stone-400 text-sm">Tap to select an event</p>
             )}
           </div>
+          {/* Seat availability badge */}
+          {selectedEvent?._count && (
+            <div className="flex flex-col items-end gap-0.5 shrink-0 mr-1">
+              <div className="flex items-center gap-1 text-xs text-stone-500">
+                <Users size={11} />
+                {selectedEvent._count.attendances} in
+              </div>
+              <div className="flex items-center gap-1 text-xs text-stone-500">
+                <Ticket size={11} />
+                {selectedEvent._count.rsvps} RSVP
+              </div>
+              {selectedEvent.capacity != null && (() => {
+                const spotsLeft = selectedEvent.capacity! - selectedEvent._count!.attendances;
+                return (
+                  <span className={cn(
+                    "text-[10px] font-bold px-1.5 py-0.5 rounded-full",
+                    spotsLeft <= 0 ? "bg-red-100 text-red-700" :
+                    spotsLeft <= 3 ? "bg-amber-100 text-amber-700" :
+                    "bg-emerald-100 text-emerald-700"
+                  )}>
+                    {spotsLeft <= 0 ? "FULL" : `${spotsLeft} left`}
+                  </span>
+                );
+              })()}
+            </div>
+          )}
           <div className="flex items-center gap-2 shrink-0 ml-3">
             {selectedEvent && <EventBadge type={selectedEvent.type} />}
             <ChevronDown size={16} className={cn("text-stone-400 transition-transform", showEventList && "rotate-180")} />
@@ -135,7 +167,18 @@ export default function ScanPage() {
                       selectedEventId === e.id && "bg-amber-50"
                     )}
                   >
-                    <span className="text-sm text-stone-800 truncate font-medium">{e.title.split(" - ")[0]}</span>
+                    <div className="min-w-0 flex-1">
+                      <span className="text-sm text-stone-800 truncate font-medium block">{e.title.split(" - ")[0]}</span>
+                      {e._count && (
+                        <span className="text-[10px] text-stone-400">
+                          {e._count.attendances} checked in · {e._count.rsvps} RSVP'd
+                          {e.capacity != null && (() => {
+                            const left = e.capacity! - e._count!.attendances;
+                            return left <= 0 ? " · Full" : ` · ${left} spots left`;
+                          })()}
+                        </span>
+                      )}
+                    </div>
                     <div className="flex items-center gap-2 shrink-0">
                       {isNow && <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />}
                       <span className="text-xs text-stone-500">{formatToronto(new Date(e.startTime), "HH:mm")}</span>
