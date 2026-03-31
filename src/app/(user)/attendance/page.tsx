@@ -31,7 +31,7 @@ export default async function AttendancePage() {
   const attendances = await getWeeklyAttendance(session!.user.id);
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+    <div className="max-w-5xl mx-auto px-4 py-6 space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-stone-900">My Attendance</h1>
         <p className="text-stone-500 text-sm">Sessions you attended this week</p>
@@ -48,14 +48,14 @@ export default async function AttendancePage() {
         </div>
       </div>
 
-      {/* List */}
+      {/* List — grid on desktop */}
       {attendances.length === 0 ? (
         <div className="text-center py-16 text-stone-400">
           <Calendar size={40} className="mx-auto mb-3 opacity-30" />
           <p className="text-sm">No attendance recorded this week.</p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {attendances.map((a) => (
             <div
               key={a.id}
