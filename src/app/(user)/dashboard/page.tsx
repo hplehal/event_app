@@ -69,8 +69,8 @@ export default async function DashboardPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Hi, {name} 👋</h1>
-          <p className="text-slate-500 text-sm">Here's what's on the courts today</p>
+          <h1 className="text-2xl font-bold text-stone-900">Hi, {name} 👋</h1>
+          <p className="text-stone-500 text-sm">Here's what's on the courts today</p>
         </div>
         <TorontoClock />
       </div>
@@ -80,7 +80,7 @@ export default async function DashboardPage() {
         label="Check-ins this week"
         value={weekAttendanceCount}
         icon={CalendarCheck}
-        color="blue"
+        color="amber"
       />
 
       {/* Happening Now */}
@@ -107,7 +107,7 @@ export default async function DashboardPage() {
       {/* Starting Soon */}
       {startingSoon.length > 0 && (
         <section>
-          <h2 className="text-sm font-semibold text-blue-700 uppercase tracking-wide mb-2 flex items-center gap-2">
+          <h2 className="text-sm font-semibold text-amber-700 uppercase tracking-wide mb-2 flex items-center gap-2">
             <TrendingUp size={14} />
             Starting Soon — Check In Now ({startingSoon.length})
           </h2>
@@ -126,11 +126,11 @@ export default async function DashboardPage() {
 
       {/* All Today */}
       <section>
-        <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wide mb-2">
+        <h2 className="text-sm font-semibold text-stone-600 uppercase tracking-wide mb-2">
           All Today ({allToday.length})
         </h2>
         {allToday.length === 0 ? (
-          <div className="text-center py-10 text-slate-400 text-sm">No games or sessions scheduled today.</div>
+          <div className="text-center py-10 text-stone-400 text-sm">No games or sessions scheduled today.</div>
         ) : (
           <div className="space-y-2">
             {allToday.map((e) => {

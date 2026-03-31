@@ -10,7 +10,7 @@ export default async function UserLayout({ children }: { children: React.ReactNo
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-stone-50">
       <main className="pb-20 min-h-screen">{children}</main>
       <UserNav />
       <AttendancePoller userName={session.user.name ?? undefined} />

@@ -32,7 +32,7 @@ export default function ReportsPage() {
       }
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
-      const filename = `titoscourt-report-${format(new Date(), "yyyy-MM-dd")}.xlsx`;
+      const filename = `titos-courts-report-${format(new Date(), "yyyy-MM-dd")}.xlsx`;
       const link = document.createElement("a");
       link.href = url;
       link.download = filename;
@@ -46,7 +46,7 @@ export default function ReportsPage() {
 
   const sheets = [
     { name: "All Events", description: "All events in the date range with title, type, date, time, location, and total attendance count." },
-    { name: "By Event Type", description: "Total attendances and unique users per event type (Meeting, Interview, Workshop, etc.)." },
+    { name: "By Event Type", description: "Total attendances and unique players per event type (Volleyball, Basketball, Tennis, etc.)." },
     { name: "By Day of Week", description: "Attendance distribution across Monday–Saturday." },
     { name: "By Hour of Day", description: "Hourly attendance distribution (8am–9pm) to identify peak times." },
     { name: "Top 10 Events", description: "The 10 most attended events in the period, sorted by attendance count." },
@@ -57,16 +57,16 @@ export default function ReportsPage() {
     <div className="max-w-2xl space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+        <h1 className="text-2xl font-bold text-stone-900 flex items-center gap-2">
           <BarChart3 size={22} />
           Reports
         </h1>
-        <p className="text-slate-500 text-sm">Export attendance data as an Excel workbook</p>
+        <p className="text-stone-500 text-sm">Export attendance data as an Excel workbook</p>
       </div>
 
       {/* Export form */}
-      <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-5">
-        <h2 className="font-semibold text-slate-900">Date Range</h2>
+      <div className="bg-white border border-stone-200 rounded-xl p-5 space-y-5">
+        <h2 className="font-semibold text-stone-900">Date Range</h2>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Label htmlFor="from">From</Label>
@@ -100,9 +100,9 @@ export default function ReportsPage() {
       </div>
 
       {/* Sheets preview */}
-      <div className="bg-white border border-slate-200 rounded-xl p-5">
-        <h2 className="font-semibold text-slate-900 mb-4">Report Contents</h2>
-        <p className="text-sm text-slate-500 mb-4">
+      <div className="bg-white border border-stone-200 rounded-xl p-5">
+        <h2 className="font-semibold text-stone-900 mb-4">Report Contents</h2>
+        <p className="text-sm text-stone-500 mb-4">
           The exported Excel file contains {sheets.length} sheets:
         </p>
         <div className="space-y-3">
@@ -112,8 +112,8 @@ export default function ReportsPage() {
                 {i + 1}
               </span>
               <div>
-                <p className="text-sm font-medium text-slate-900">{sheet.name}</p>
-                <p className="text-xs text-slate-500">{sheet.description}</p>
+                <p className="text-sm font-medium text-stone-900">{sheet.name}</p>
+                <p className="text-xs text-stone-500">{sheet.description}</p>
               </div>
             </div>
           ))}

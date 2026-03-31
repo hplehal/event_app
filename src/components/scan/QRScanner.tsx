@@ -55,9 +55,9 @@ export function QRScanner({ onScan, active = true }: QRScannerProps) {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center gap-3 p-8 bg-slate-100 rounded-xl border-2 border-dashed border-slate-300 text-center">
-        <CameraOff size={32} className="text-slate-400" />
-        <p className="text-sm text-slate-600">{error}</p>
+      <div className="flex flex-col items-center justify-center gap-3 p-8 bg-stone-100 rounded-xl border-2 border-dashed border-stone-300 text-center">
+        <CameraOff size={32} className="text-stone-400" />
+        <p className="text-sm text-stone-600">{error}</p>
       </div>
     );
   }
@@ -81,7 +81,7 @@ export function QRScanner({ onScan, active = true }: QRScannerProps) {
           <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-white rounded-br" />
           {/* Scan line */}
           {scanning && (
-            <div className="absolute left-1 right-1 h-0.5 bg-blue-400 opacity-80 animate-[scan_2s_ease-in-out_infinite]" />
+            <div className="absolute left-1 right-1 h-0.5 bg-amber-400 opacity-80 animate-[scan_2s_ease-in-out_infinite]" />
           )}
         </div>
       </div>

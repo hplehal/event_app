@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
   }
 
   const buffer = await generateReport(startUTC, endUTC);
-  const filename = `titoscourt-report-${format(new Date(), "yyyy-MM-dd")}.xlsx`;
+  const filename = `titos-courts-report-${format(new Date(), "yyyy-MM-dd")}.xlsx`;
 
   return new NextResponse(new Uint8Array(buffer), {
     headers: {

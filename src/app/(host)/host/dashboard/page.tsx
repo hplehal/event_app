@@ -52,43 +52,43 @@ export default async function HostDashboardPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
-          <p className="text-slate-500 text-sm">Overview of all court events and player check-ins</p>
+          <h1 className="text-2xl font-bold text-stone-900">Dashboard</h1>
+          <p className="text-stone-500 text-sm">Overview of all court events and player check-ins</p>
         </div>
         <TorontoClock />
       </div>
 
       {/* Stats grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Total Sessions" value={totalEvents} icon={CalendarDays} color="blue" />
-        <StatCard label="Total Check-ins" value={totalAttendances} icon={CheckSquare} color="green" />
+        <StatCard label="Total Sessions" value={totalEvents} icon={CalendarDays} color="amber" />
+        <StatCard label="Total Check-ins" value={totalAttendances} icon={CheckSquare} color="emerald" />
         <StatCard label="Sessions Today" value={todayEvents} icon={TrendingUp} color="purple" />
         <StatCard label="Check-ins Today" value={todayAttendances} icon={Users} color="orange" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Events */}
-        <div className="bg-white border border-slate-200 rounded-xl p-5">
-          <h2 className="font-semibold text-slate-900 mb-4">Most Popular Sessions</h2>
+        <div className="bg-white border border-stone-200 rounded-xl p-5">
+          <h2 className="font-semibold text-stone-900 mb-4">Most Popular Sessions</h2>
           <div className="space-y-3">
             {topEvents.map((e, i) => (
               <div key={e.id} className="flex items-center gap-3">
-                <span className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-500">
+                <span className="w-6 h-6 rounded-full bg-stone-100 flex items-center justify-center text-xs font-bold text-stone-500">
                   {i + 1}
                 </span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-slate-900 truncate">{e.title.split(" - ")[0]}</p>
+                  <p className="text-sm font-medium text-stone-900 truncate">{e.title.split(" - ")[0]}</p>
                   <EventBadge type={e.type} />
                 </div>
-                <span className="text-sm font-bold text-slate-700">{e._count.attendances}</span>
+                <span className="text-sm font-bold text-stone-700">{e._count.attendances}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Recent Attendances */}
-        <div className="bg-white border border-slate-200 rounded-xl p-5">
-          <h2 className="font-semibold text-slate-900 mb-4">Recent Check-ins</h2>
+        <div className="bg-white border border-stone-200 rounded-xl p-5">
+          <h2 className="font-semibold text-stone-900 mb-4">Recent Check-ins</h2>
           <div className="space-y-3">
             {recentAttendances.map((a) => (
               <div key={a.id} className="flex items-center gap-3">
@@ -97,10 +97,10 @@ export default async function HostDashboardPage() {
                   <AvatarFallback className="text-xs">{a.user.name?.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-slate-900 truncate">{a.user.name}</p>
-                  <p className="text-xs text-slate-400 truncate">{a.event.title.split(" - ")[0]}</p>
+                  <p className="text-sm font-medium text-stone-900 truncate">{a.user.name}</p>
+                  <p className="text-xs text-stone-400 truncate">{a.event.title.split(" - ")[0]}</p>
                 </div>
-                <span className="text-xs text-slate-400 flex-shrink-0">
+                <span className="text-xs text-stone-400 flex-shrink-0">
                   {formatToronto(a.scannedAt, "HH:mm")}
                 </span>
               </div>

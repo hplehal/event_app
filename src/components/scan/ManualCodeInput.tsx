@@ -29,7 +29,7 @@ export function ManualCodeInput({ onScan, disabled }: ManualCodeInputProps) {
         <Label htmlFor="code">Attendee Code</Label>
         <div className="flex gap-2 mt-1">
           <div className="relative flex-1">
-            <Hash size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Hash size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
             <Input
               id="code"
               value={code}
@@ -45,7 +45,7 @@ export function ManualCodeInput({ onScan, disabled }: ManualCodeInputProps) {
           </Button>
         </div>
       </div>
-      <p className="text-xs text-slate-400">
+      <p className="text-xs text-stone-400">
         The code is visible on the attendee's profile page.
       </p>
     </form>

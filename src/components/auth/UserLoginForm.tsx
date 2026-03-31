@@ -3,60 +3,18 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { toast } from "sonner";
-import { Loader2, Mail } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
-interface Props {
-  verifyMode?: boolean;
-}
-
-export function UserLoginForm({ verifyMode }: Props) {
-  const [email, setEmail] = useState("");
+export function UserLoginForm() {
   const [loading, setLoading] = useState(false);
-  const [sent, setSent] = useState(false);
 
   async function handleGoogleLogin() {
     setLoading(true);
     await signIn("google", { callbackUrl: "/profile" });
   }
 
-  async function handleEmailLogin(e: React.FormEvent) {
-    e.preventDefault();
-    if (!email) return;
-    setLoading(true);
-    try {
-      const res = await signIn("resend", { email, redirect: false, callbackUrl: "/profile" });
-      if (res?.error) {
-        toast.error("Failed to send magic link. Please try again.");
-      } else {
-        setSent(true);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  if (verifyMode || sent) {
-    return (
-      <div className="text-center py-6">
-        <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Mail size={24} className="text-blue-600" />
-        </div>
-        <h3 className="text-lg font-semibold text-slate-900 mb-2">Check your email</h3>
-        <p className="text-slate-500 text-sm">
-          We sent a sign-in link to <strong>{email || "your email"}</strong>.
-          Click the link to continue.
-        </p>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-4">
-      {/* Google */}
       <Button
         variant="outline"
         className="w-full h-11 gap-2"
@@ -75,32 +33,6 @@ export function UserLoginForm({ verifyMode }: Props) {
         )}
         Continue with Google
       </Button>
-
-      <div className="flex items-center gap-3">
-        <Separator className="flex-1" />
-        <span className="text-xs text-slate-400">or</span>
-        <Separator className="flex-1" />
-      </div>
-
-      {/* Email magic link */}
-      <form onSubmit={handleEmailLogin} className="space-y-3">
-        <div>
-          <Label htmlFor="email">Work Email</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="you@company.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={loading}
-            className="mt-1"
-          />
-        </div>
-        <Button type="submit" className="w-full" disabled={loading || !email}>
-          {loading ? <Loader2 size={16} className="animate-spin mr-2" /> : null}
-          Send Magic Link
-        </Button>
-      </form>
     </div>
   );
 }

@@ -21,24 +21,24 @@ export default async function ProfilePage() {
   return (
     <div className="max-w-md mx-auto px-4 py-6 space-y-5">
       {/* QR Code — first and prominent */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col items-center gap-3">
+      <div className="bg-white border border-stone-200 rounded-2xl p-6 flex flex-col items-center gap-3">
         <QRCodeDisplay value={user.qrCode} size={240} />
-        <p className="text-xs text-slate-400 text-center">
+        <p className="text-xs text-stone-400 text-center">
           Show this to the host to register your attendance
         </p>
       </div>
 
       {/* User info */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-4 flex items-center gap-3">
+      <div className="bg-white border border-stone-200 rounded-2xl p-4 flex items-center gap-3">
         <Avatar className="w-12 h-12 shrink-0">
           <AvatarImage src={user.image ?? undefined} />
-          <AvatarFallback className="bg-slate-100">
+          <AvatarFallback className="bg-stone-100">
             {user.name?.charAt(0) ?? <User size={18} />}
           </AvatarFallback>
         </Avatar>
         <div className="min-w-0">
-          <p className="font-semibold text-slate-900 truncate">{user.name}</p>
-          <p className="flex items-center gap-1 text-xs text-slate-500 truncate">
+          <p className="font-semibold text-stone-900 truncate">{user.name}</p>
+          <p className="flex items-center gap-1 text-xs text-stone-500 truncate">
             <Mail size={11} />
             {user.email}
           </p>

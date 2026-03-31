@@ -49,8 +49,8 @@ export function AutoPayModal({ open, onClose }: AutoPayModalProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
-          <p className="text-xs text-blue-700">
+        <div className="bg-amber-50 border border-amber-100 rounded-lg p-3">
+          <p className="text-xs text-amber-700">
             With auto-pay enabled, your registered payment method will be charged
             automatically when you attend events that require a ticket.
           </p>
@@ -58,7 +58,7 @@ export function AutoPayModal({ open, onClose }: AutoPayModalProps) {
 
         <DialogFooter className="gap-2">
           <Button variant="outline" onClick={handleDecline}>No Thanks</Button>
-          <Button onClick={handleEnable} className="gap-2 bg-blue-600 hover:bg-blue-700">
+          <Button onClick={handleEnable} className="gap-2 bg-amber-600 hover:bg-amber-700">
             <Zap size={15} />
             Enable Auto-Pay
           </Button>

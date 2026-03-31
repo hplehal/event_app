@@ -44,8 +44,8 @@ export default function CalendarPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 space-y-4">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Calendar</h1>
-        <p className="text-slate-500 text-sm">Weekly view of all events</p>
+        <h1 className="text-2xl font-bold text-stone-900">Calendar</h1>
+        <p className="text-stone-500 text-sm">Weekly view of all events</p>
       </div>
 
       <WeeklyCalendar
@@ -67,18 +67,18 @@ export default function CalendarPage() {
               <div className="flex flex-wrap gap-2">
                 <EventBadge type={selectedEvent.type} />
                 {myAttendanceIds.includes(selectedEvent.id) && (
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
                     Registered
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-2 text-sm text-slate-600">
+              <div className="flex items-center gap-2 text-sm text-stone-600">
                 <Clock size={14} />
                 {formatToronto(new Date(selectedEvent.startTime), "EEEE, MMM d · HH:mm")} –{" "}
                 {formatToronto(new Date(selectedEvent.endTime), "HH:mm")}
               </div>
               {selectedEvent.location && (
-                <div className="flex items-center gap-2 text-sm text-slate-600">
+                <div className="flex items-center gap-2 text-sm text-stone-600">
                   <MapPin size={14} />
                   {selectedEvent.location}
                 </div>

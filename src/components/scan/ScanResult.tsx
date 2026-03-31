@@ -68,7 +68,7 @@ export function ScanResult({ type, message, user, event, onDismiss, autoDismissM
             {message}
           </p>
         </div>
-        <Button variant="ghost" size="sm" onClick={onDismiss} className="text-slate-500 h-auto p-1">
+        <Button variant="ghost" size="sm" onClick={onDismiss} className="text-stone-500 h-auto p-1">
           ×
         </Button>
       </div>

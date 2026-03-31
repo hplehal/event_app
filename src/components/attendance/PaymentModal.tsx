@@ -42,18 +42,18 @@ export function PaymentModal({ open, onClose, eventTitle, userName }: PaymentMod
           </DialogDescription>
         </DialogHeader>
 
-        <div className="bg-slate-50 rounded-lg p-4 space-y-2">
+        <div className="bg-stone-50 rounded-lg p-4 space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-slate-600">Event</span>
+            <span className="text-stone-600">Event</span>
             <span className="font-medium truncate ml-4">{eventTitle ?? "—"}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-slate-600">Attendee</span>
+            <span className="text-stone-600">Attendee</span>
             <span className="font-medium">{userName ?? "—"}</span>
           </div>
           <div className="flex justify-between text-sm border-t pt-2 mt-2">
             <span className="font-semibold">Amount Due</span>
-            <span className="font-bold text-slate-900">$0.00</span>
+            <span className="font-bold text-stone-900">$0.00</span>
           </div>
         </div>
 

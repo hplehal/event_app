@@ -100,8 +100,8 @@ export default function HostEventsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Events</h1>
-            <p className="text-slate-500 text-sm">Manage and view court sessions</p>
+            <h1 className="text-2xl font-bold text-stone-900">Events</h1>
+            <p className="text-stone-500 text-sm">Manage and view court sessions</p>
           </div>
           <div className="flex gap-2">
             {/* XLSX Import stub */}
@@ -118,7 +118,7 @@ export default function HostEventsPage() {
 
         {/* Date navigator + type filter */}
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-lg px-2 py-1">
+          <div className="flex items-center gap-1 bg-white border border-stone-200 rounded-lg px-2 py-1">
             <Button variant="ghost" size="icon" className="h-7 w-7" onClick={prevDay}>
               <ChevronLeft size={14} />
             </Button>
@@ -132,7 +132,7 @@ export default function HostEventsPage() {
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white text-slate-700"
+            className="text-sm border border-stone-200 rounded-lg px-3 py-2 bg-white text-stone-700"
           >
             <option value="ALL">All Types</option>
             {EVENT_TYPES.map((t) => (
@@ -143,7 +143,7 @@ export default function HostEventsPage() {
 
         {/* Events list */}
         {events.length === 0 ? (
-          <div className="text-center py-16 text-slate-400 text-sm">
+          <div className="text-center py-16 text-stone-400 text-sm">
             No sessions scheduled for this date.
           </div>
         ) : (
@@ -170,7 +170,7 @@ export default function HostEventsPage() {
                 <select
                   value={form.type}
                   onChange={(e) => setForm({ ...form, type: e.target.value })}
-                  className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 mt-1 bg-white"
+                  className="w-full text-sm border border-stone-200 rounded-lg px-3 py-2 mt-1 bg-white"
                 >
                   {EVENT_TYPES.map((t) => (
                     <option key={t} value={t}>{EVENT_TYPE_LABELS[t]}</option>
