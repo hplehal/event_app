@@ -28,7 +28,7 @@ export function QRCodeDisplay({ value, size = 200 }: QRCodeDisplayProps) {
       ctx.fillRect(0, 0, size, size);
       ctx.drawImage(img, 0, 0, size, size);
       const link = document.createElement("a");
-      link.download = "timapp-qr-code.png";
+      link.download = "titoscourt-qr-code.png";
       link.href = canvas.toDataURL("image/png");
       link.click();
     };

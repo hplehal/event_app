@@ -32,7 +32,7 @@ export default function ReportsPage() {
       }
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
-      const filename = `timapp-report-${format(new Date(), "yyyy-MM-dd")}.xlsx`;
+      const filename = `titoscourt-report-${format(new Date(), "yyyy-MM-dd")}.xlsx`;
       const link = document.createElement("a");
       link.href = url;
       link.download = filename;
