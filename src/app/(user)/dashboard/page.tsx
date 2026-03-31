@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { TorontoClock } from "@/components/dashboard/TorontoClock";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { EventCard } from "@/components/events/EventCard";
-import { CalendarCheck, TrendingUp, CalendarDays, Users } from "lucide-react";
+import { CalendarCheck, TrendingUp, CalendarDays, Users, Flame } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 import { prisma } from "@/lib/prisma";
@@ -69,16 +69,19 @@ export default async function DashboardPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-stone-900">Hi, {name}</h1>
-          <p className="text-stone-500 text-sm">Here's what's on the courts today</p>
+      {/* Hero welcome banner */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-stone-900 via-stone-800 to-amber-900/40 p-6 md:p-8 text-white">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(245,166,35,0.15)_0%,_transparent_60%)]" />
+        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Hi, {name}</h1>
+            <p className="text-stone-300 text-sm mt-1">Here's what's on the courts today</p>
+          </div>
+          <TorontoClock />
         </div>
-        <TorontoClock />
       </div>
 
-      {/* Stats — 2 cols mobile, 3 cols desktop */}
+      {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard
           label="Check-ins this week"
@@ -93,9 +96,9 @@ export default async function DashboardPage() {
           color="emerald"
         />
         <StatCard
-          label="On right now"
+          label="Live right now"
           value={happeningNow.length}
-          icon={Users}
+          icon={Flame}
           color="orange"
           className="col-span-2 lg:col-span-1"
         />
@@ -107,8 +110,8 @@ export default async function DashboardPage() {
         <div className="lg:col-span-3 space-y-6">
           {/* Happening Now */}
           {happeningNow.length > 0 && (
-            <section>
-              <h2 className="text-sm font-semibold text-green-700 uppercase tracking-wide mb-2 flex items-center gap-2">
+            <section className="bg-green-50/50 border border-green-200 rounded-2xl p-4">
+              <h2 className="text-sm font-bold text-green-700 uppercase tracking-wide mb-3 flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                 Happening Now ({happeningNow.length})
               </h2>
@@ -128,10 +131,10 @@ export default async function DashboardPage() {
 
           {/* Starting Soon */}
           {startingSoon.length > 0 && (
-            <section>
-              <h2 className="text-sm font-semibold text-amber-700 uppercase tracking-wide mb-2 flex items-center gap-2">
+            <section className="bg-amber-50/50 border border-amber-200 rounded-2xl p-4">
+              <h2 className="text-sm font-bold text-amber-700 uppercase tracking-wide mb-3 flex items-center gap-2">
                 <TrendingUp size={14} />
-                Starting Soon — Check In Now ({startingSoon.length})
+                Starting Soon ({startingSoon.length})
               </h2>
               <div className="space-y-2">
                 {startingSoon.map((e) => (
@@ -145,16 +148,30 @@ export default async function DashboardPage() {
               </div>
             </section>
           )}
+
+          {/* If nothing is live or starting, show a message */}
+          {happeningNow.length === 0 && startingSoon.length === 0 && allToday.length > 0 && (
+            <div className="bg-stone-50 border border-stone-200 rounded-2xl p-6 text-center">
+              <Users size={28} className="mx-auto text-stone-300 mb-2" />
+              <p className="text-sm text-stone-500">No sessions live right now. Check the schedule for upcoming games.</p>
+            </div>
+          )}
         </div>
 
-        {/* Right column — all today (sidebar on desktop) */}
+        {/* Right column — today's schedule */}
         <div className="lg:col-span-2">
           <section>
-            <h2 className="text-sm font-semibold text-stone-600 uppercase tracking-wide mb-2">
-              Today's Schedule ({allToday.length})
-            </h2>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-bold text-stone-600 uppercase tracking-wide">
+                Today's Schedule
+              </h2>
+              <span className="text-xs text-stone-400 font-medium bg-stone-100 px-2 py-0.5 rounded-full">
+                {allToday.length} sessions
+              </span>
+            </div>
             {allToday.length === 0 ? (
-              <div className="text-center py-10 text-stone-400 text-sm bg-white rounded-xl border border-stone-200">
+              <div className="text-center py-10 text-stone-400 text-sm bg-white rounded-2xl border border-stone-200">
+                <CalendarDays size={32} className="mx-auto mb-2 opacity-30" />
                 No games or sessions scheduled today.
               </div>
             ) : (
