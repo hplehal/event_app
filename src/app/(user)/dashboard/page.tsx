@@ -1,13 +1,13 @@
 import { auth } from "@/lib/auth";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { EventCard } from "@/components/events/EventCard";
-import { EventBadge } from "@/components/events/EventBadge";
-import { CalendarCheck, TrendingUp, CalendarDays, Users, Flame, Star, MapPin } from "lucide-react";
+import { FeaturedEvents } from "@/components/events/FeaturedEvents";
+import { CalendarCheck, TrendingUp, CalendarDays, Users, Flame } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 import { prisma } from "@/lib/prisma";
 import { fromZonedTime, toZonedTime } from "date-fns-tz";
-import { TORONTO_TZ, formatToronto } from "@/lib/utils";
+import { TORONTO_TZ } from "@/lib/utils";
 
 async function getDashboardData(userId: string) {
   const nowUTC = new Date();
@@ -194,44 +194,7 @@ export default async function DashboardPage() {
           )}
 
           {/* Featured For You */}
-          {featured.length > 0 && (
-            <section>
-              <div className="flex items-center gap-2 mb-3">
-                <Star size={16} className="text-amber-500" />
-                <h2 className="text-sm font-bold text-stone-700 uppercase tracking-wide">Featured For You</h2>
-              </div>
-              <p className="text-xs text-stone-400 mb-3">Based on sessions you've attended before</p>
-              <div className="space-y-2">
-                {featured.map((e) => (
-                  <div key={e.id} className="flex overflow-hidden rounded-xl border border-stone-200 bg-white hover:shadow-md hover:border-stone-300 transition-all">
-                    <div className="w-1.5 flex-shrink-0 bg-amber-400" />
-                    <div className="flex gap-3 p-3 flex-1 min-w-0">
-                      <div className="flex-shrink-0 text-center w-14">
-                        <p className="text-xs font-bold text-amber-600 uppercase">{formatToronto(new Date(e.startTime), "EEE")}</p>
-                        <p className="text-lg font-extrabold text-stone-900 leading-tight">{formatToronto(new Date(e.startTime), "d")}</p>
-                        <p className="text-[10px] text-stone-400">{formatToronto(new Date(e.startTime), "MMM")}</p>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-stone-900 truncate">{e.title}</p>
-                        <div className="flex flex-wrap items-center gap-2 mt-1">
-                          <EventBadge type={e.type} />
-                          <span className="text-xs text-stone-400">
-                            {formatToronto(new Date(e.startTime), "HH:mm")} – {formatToronto(new Date(e.endTime), "HH:mm")}
-                          </span>
-                        </div>
-                        {e.location && (
-                          <span className="flex items-center gap-1 text-xs text-stone-400 mt-1">
-                            <MapPin size={10} />
-                            {e.location}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
+          <FeaturedEvents events={featured} />
         </div>
 
         {/* Right column — today's schedule */}

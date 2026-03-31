@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { WeeklyCalendar } from "@/components/events/WeeklyCalendar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { EventBadge } from "@/components/events/EventBadge";
-import { MapPin, Clock } from "lucide-react";
+import { AddToCalendarButton } from "@/components/events/AddToCalendarButton";
+import { MapPin, Clock, Users } from "lucide-react";
 import { formatToronto, TORONTO_TZ } from "@/lib/utils";
 import { toZonedTime } from "date-fns-tz";
 import { format, startOfWeek, addDays } from "date-fns";
@@ -67,7 +68,7 @@ export default function CalendarPage() {
                 <EventBadge type={selectedEvent.type} />
                 {myAttendanceIds.includes(selectedEvent.id) && (
                   <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
-                    Registered
+                    Checked In
                   </span>
                 )}
               </div>
@@ -82,6 +83,14 @@ export default function CalendarPage() {
                   {selectedEvent.location}
                 </div>
               )}
+              <div className="flex items-center gap-2 text-sm text-stone-600">
+                <Users size={14} />
+                {selectedEvent._count.attendances} checked in
+              </div>
+
+              <div className="pt-2 border-t border-stone-100">
+                <AddToCalendarButton event={selectedEvent} />
+              </div>
             </div>
           </DialogContent>
         )}
