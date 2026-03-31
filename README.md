@@ -1,46 +1,61 @@
-# 🍁 TimApp — Attendance Tracker
+# Tito's Courts — Court & Event Management
 
-A challenge project developed for **Professor Timothy Wong**'s class. TimApp is a full-stack **Progressive Web App (PWA)** for tracking attendance at corporate events — users scan in via QR code, hosts manage events and pull reports. For the best experience testing the full flow, open the user view on your computer to display your QR code and the host view on your phone, so you can use the camera to scan it.
+A full-stack **Progressive Web App (PWA)** for managing court bookings, league games, tournaments, and player check-ins at **Tito's Courts**. Players scan in via QR code, court hosts manage sessions and pull reports.
 
-**Live:** [andrejoaoborges.com](https://andrejoaoborges.com)
+> **Tip:** For the best demo experience, open the player view on your computer (to display your QR code) and the host view on your phone (to scan it with the camera).
 
-> **Note:** The app is pre-loaded with sample data — a set of realistic events spread across the current week, plus 25 mock users with attendance history — so you can explore all features right away without setting anything up.
+The app is pre-loaded with sample data — volleyball, basketball, tennis, and soccer sessions across the current week, plus 25 mock players with check-in history — so you can explore all features immediately.
 
 ---
 
 ## How to Use
 
-### As a User (attendee)
+### As a Player
 
-1. Go to [andrejoaoborges.com](https://andrejoaoborges.com) and sign in with Google or a magic link sent to your email.
-2. After login you land directly on your **QR Code** page — a personal 7-character code unique to your account.
-3. Show the QR code to the host to register your attendance at an event.
+1. Sign in with Google or a magic link sent to your email.
+2. After login you land on your **QR Code** page — a unique 7-character code tied to your account.
+3. Show the QR code to the court host when you arrive to check in to a session.
 4. Use the bottom navigation to explore:
-   - **Profile** — your QR code
-   - **Calendar** — weekly view of events, color-coded by type, with your attendance marked
-   - **Attendance** — your full attendance history
-   - **Dashboard** — summary stats
+   - **Profile** — your personal QR code
+   - **Calendar** — weekly court schedule, color-coded by sport, with your check-ins marked
+   - **Attendance** — full check-in history
+   - **Dashboard** — today's sessions, what's happening now, and weekly stats
 
 ---
 
-### As a Host
+### As a Host (Court Manager)
 
 > **Demo credentials**
 > **Email:** `host@example.com`
 > **Password:** `password123`
 
-1. Go to [andrejoaoborges.com/host/login](https://andrejoaoborges.com/host/login) and sign in with the credentials above.
-2. You land on the **Scan** page — select the active event and point the camera at a user's QR code to register their attendance.
-3. If the camera isn't convenient, switch to the **Manual** tab and type in the 7-character code directly.
+1. Sign in at `/host/login` with the credentials above.
+2. You land on the **Scan** page — select the active court session and point the camera at a player's QR code to check them in.
+3. If the camera isn't convenient, switch to the **Manual** tab and type in the 7-character code.
 
 **Host portal sections:**
 
 | Section | What it does |
 |---|---|
-| **Scan** | QR camera scanner + manual code entry. Auto-selects the currently active event. |
-| **Events** | Browse events by day, filter by type, create new events. |
-| **Reports** | Export an Excel workbook with 6 sheets of attendance analytics for any date range. |
-| **Dashboard** | Overview stats — total events, total check-ins, active users. |
+| **Scan** | QR camera scanner + manual code entry. Auto-selects the current session. |
+| **Events** | Browse court sessions by day, filter by sport type, create new sessions. |
+| **Reports** | Export an Excel workbook with 6 analytics sheets for any date range. |
+| **Dashboard** | Overview stats — total sessions, check-ins, most popular courts. |
+
+---
+
+### Court Session Types
+
+| Type | Description |
+|---|---|
+| **Volleyball** | Indoor/outdoor volleyball games and scrimmages |
+| **Basketball** | Full-court and half-court pickup games |
+| **Tennis** | Singles, doubles, and round robin matches |
+| **Soccer** | Indoor soccer and futsal sessions |
+| **Tournament** | Organized competitive tournament brackets |
+| **League** | Scheduled league nights (Mon–Sat) |
+| **Open Court** | Drop-in free play, open gym time |
+| **Other** | Awards nights, captain's meetings, socials |
 
 ---
 
@@ -48,48 +63,56 @@ A challenge project developed for **Professor Timothy Wong**'s class. TimApp is 
 
 When you export from the Reports page, the `.xlsx` file includes:
 
-1. **All Events** — every event in the date range with attendance count
-2. **By Event Type** — totals per type (Meeting, Interview, Workshop, Training, Conference, Other)
-3. **By Day of Week** — attendance distribution Mon–Sat
-4. **By Hour of Day** — hourly distribution 8am–9pm to identify peak times
-5. **Top 10 Events** — the 10 most attended events in the period
-6. **Daily Trend** — total attendances per calendar day
+1. **All Events** — every court session in the date range with player count
+2. **By Event Type** — totals per sport (Volleyball, Basketball, Tennis, etc.)
+3. **By Day of Week** — check-in distribution Mon–Sat
+4. **By Hour of Day** — hourly distribution to identify peak court times
+5. **Top 10 Events** — the 10 most attended sessions in the period
+6. **Daily Trend** — total check-ins per calendar day
+
+---
+
+## Reusable Branding
+
+The app is designed to be easily rebranded for any court or event company:
+
+- **`src/lib/site-config.ts`** — Change the app name, tagline, and brand colors in one file
+- **`src/components/brand/TitosLogo.tsx`** — Swap the SVG logo component
+- **`src/lib/utils.ts`** — Edit `EVENT_TYPES` to change available sport/session types
 
 ---
 
 ## Project Structure
 
 ```
-timapp/
+titos-courts/
 ├── prisma/
 │   ├── schema.prisma        # Database schema (User, Host, Event, Attendance)
-│   ├── seed.ts              # Seeds hosts, 25 sample users, and a week of events
-│   └── prod.db              # SQLite production database (on server)
+│   ├── seed.ts              # Seeds hosts, 25 mock players, and court sessions
+│   └── dev.db               # SQLite database (local dev)
 │
 ├── src/
 │   ├── app/
 │   │   ├── (auth)/          # Public auth pages: /login, /host/login
-│   │   ├── (user)/          # Protected user pages: profile, calendar, attendance, dashboard
-│   │   ├── (host)/          # Protected host pages: scan, events, reports, dashboard
-│   │   └── api/             # REST API routes: attendance, events, reports, host auth
+│   │   ├── (user)/          # Player pages: profile, calendar, attendance, dashboard
+│   │   ├── (host)/          # Host pages: scan, events, reports, dashboard
+│   │   └── api/             # REST API routes
 │   │
 │   ├── components/
-│   │   ├── auth/            # Login forms (user + host)
+│   │   ├── brand/           # TitosLogo reusable logo component
+│   │   ├── auth/            # Login forms (player + host)
 │   │   ├── events/          # Event cards, badges, weekly calendar
-│   │   ├── scan/            # QR scanner (ZXing), manual code input, result display
-│   │   ├── profile/         # QR code display (react-qr-code)
-│   │   ├── layout/          # Bottom nav (user), sidebar (host)
-│   │   └── ui/              # shadcn/ui components
+│   │   ├── scan/            # QR scanner (ZXing), manual code input
+│   │   ├── profile/         # QR code display
+│   │   ├── layout/          # Bottom nav (player), sidebar (host)
+│   │   └── ui/              # shadcn/ui base components
 │   │
 │   └── lib/
-│       ├── auth.ts          # NextAuth config (Google + Resend magic link)
+│       ├── site-config.ts   # Centralized branding (name, tagline, colors)
+│       ├── auth.ts          # NextAuth config (Google + magic link)
 │       ├── host-auth.ts     # JWT-based host session (jose)
 │       ├── prisma.ts        # Prisma client singleton
-│       └── utils.ts         # Toronto timezone helpers, event type constants
-│
-├── .github/
-│   └── workflows/
-│       └── deploy.yml       # CI/CD pipeline
+│       └── utils.ts         # Timezone helpers, court/sport type constants
 │
 └── public/
     ├── icons/               # PWA icons (SVG + PNG)
@@ -103,7 +126,7 @@ timapp/
 | Layer | Technology |
 |---|---|
 | Framework | Next.js 16 (App Router, React 19) |
-| Auth | NextAuth v5 — Google OAuth + Resend magic link (users), JWT cookies (hosts) |
+| Auth | NextAuth v5 — Google OAuth + Resend magic link (players), JWT cookies (hosts) |
 | Database | SQLite via Prisma + better-sqlite3 |
 | Styling | Tailwind CSS v4 + shadcn/ui |
 | QR Scanning | ZXing browser library |
@@ -114,28 +137,13 @@ timapp/
 
 ---
 
-## Deployment
-
-The app runs on a **Hetzner VPS** (2 vCPU, 2 GB RAM) served via **nginx** with **Let's Encrypt SSL** and kept alive with **PM2**.
-
-CI/CD is handled by **GitHub Actions** (free, unlimited for public repos). On every push to `main`:
-
-1. Installs dependencies and generates the Prisma client
-2. Builds the Next.js app on the Actions runner (which has AVX2 — the server CPU does not, so builds must happen off-server)
-3. SSHes into the server, wipes the old `.next` directory, and extracts the fresh build
-4. Restarts the app with PM2
-
-The database is SQLite and lives on the server's disk. It is not touched on deploy.
-
----
-
 ## Running Locally
 
 ```bash
 npm install
 npx prisma generate
 npx prisma db push
-npm run seed     # creates hosts, sample users, and a week of events
+npm run seed     # creates hosts, 25 mock players, and court sessions
 npm run dev
 ```
 
@@ -151,9 +159,3 @@ DATABASE_URL=file:./prisma/dev.db
 NEXTAUTH_URL=http://localhost:3000
 AUTH_TRUST_HOST=true
 ```
-
----
-
-## Author
-
-Built by **André Borges** for the **Cybersecurity Capstone Project — CSAI-5505-0NA** course.

@@ -9,31 +9,37 @@ export function cn(...inputs: ClassValue[]) {
 export const TORONTO_TZ = "America/Toronto";
 
 export const EVENT_TYPES = [
-  "INTERVIEW",
-  "MEETING",
-  "WORKSHOP",
-  "TRAINING",
-  "CONFERENCE",
+  "VOLLEYBALL",
+  "BASKETBALL",
+  "TENNIS",
+  "SOCCER",
+  "TOURNAMENT",
+  "LEAGUE",
+  "OPEN_COURT",
   "OTHER",
 ] as const;
 
 export type EventType = (typeof EVENT_TYPES)[number];
 
 export const EVENT_TYPE_LABELS: Record<EventType, string> = {
-  INTERVIEW: "Interview",
-  MEETING: "Meeting",
-  WORKSHOP: "Workshop",
-  TRAINING: "Training",
-  CONFERENCE: "Conference",
+  VOLLEYBALL: "Volleyball",
+  BASKETBALL: "Basketball",
+  TENNIS: "Tennis",
+  SOCCER: "Soccer",
+  TOURNAMENT: "Tournament",
+  LEAGUE: "League",
+  OPEN_COURT: "Open Court",
   OTHER: "Other",
 };
 
 export const EVENT_TYPE_COLORS: Record<EventType, string> = {
-  INTERVIEW: "bg-blue-100 text-blue-800 border-blue-200",
-  MEETING: "bg-green-100 text-green-800 border-green-200",
-  WORKSHOP: "bg-orange-100 text-orange-800 border-orange-200",
-  TRAINING: "bg-purple-100 text-purple-800 border-purple-200",
-  CONFERENCE: "bg-red-100 text-red-800 border-red-200",
+  VOLLEYBALL: "bg-amber-100 text-amber-800 border-amber-200",
+  BASKETBALL: "bg-orange-100 text-orange-800 border-orange-200",
+  TENNIS: "bg-green-100 text-green-800 border-green-200",
+  SOCCER: "bg-blue-100 text-blue-800 border-blue-200",
+  TOURNAMENT: "bg-red-100 text-red-800 border-red-200",
+  LEAGUE: "bg-purple-100 text-purple-800 border-purple-200",
+  OPEN_COURT: "bg-teal-100 text-teal-800 border-teal-200",
   OTHER: "bg-gray-100 text-gray-800 border-gray-200",
 };
 

@@ -25,7 +25,7 @@ export default async function LoginPage({ searchParams }: Props) {
         <div className="bg-white rounded-2xl p-6 shadow-2xl">
           <h2 className="text-lg font-semibold text-slate-900 mb-1">Sign in</h2>
           <p className="text-slate-500 text-sm mb-6">
-            Sign in to access {siteConfig.name}.
+            Sign in to view courts, events, and check-ins.
           </p>
           <UserLoginForm verifyMode={verify === "1"} />
         </div>
