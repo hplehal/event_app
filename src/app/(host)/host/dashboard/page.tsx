@@ -3,7 +3,7 @@ import { StatCard } from "@/components/dashboard/StatCard";
 import { EventBadge } from "@/components/events/EventBadge";
 import { formatToronto, TORONTO_TZ } from "@/lib/utils";
 import { fromZonedTime, toZonedTime } from "date-fns-tz";
-import { CalendarDays, Users, CheckSquare, TrendingUp } from "lucide-react";
+import { CalendarDays, Users, CheckSquare, TrendingUp, Ticket } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 async function getStats() {
@@ -18,14 +18,15 @@ async function getStats() {
     TORONTO_TZ
   );
 
-  const [totalEvents, totalAttendances, todayEvents, todayAttendances, topEvents, recentAttendances] =
+  const [totalEvents, totalAttendances, totalRsvps, todayEvents, todayAttendances, topEvents, recentAttendances, upcomingWithRsvps] =
     await Promise.all([
       prisma.event.count(),
       prisma.attendance.count(),
+      prisma.rsvp.count(),
       prisma.event.count({ where: { startTime: { gte: todayStart, lte: todayEnd } } }),
       prisma.attendance.count({ where: { scannedAt: { gte: todayStart, lte: todayEnd } } }),
       prisma.event.findMany({
-        include: { _count: { select: { attendances: true } } },
+        include: { _count: { select: { attendances: true, rsvps: true } } },
         orderBy: { attendances: { _count: "desc" } },
         take: 5,
       }),
@@ -37,13 +38,20 @@ async function getStats() {
         orderBy: { scannedAt: "desc" },
         take: 10,
       }),
+      // Upcoming events with RSVP counts for the RSVP vs Attendance section
+      prisma.event.findMany({
+        where: { startTime: { gte: todayStart } },
+        include: { _count: { select: { attendances: true, rsvps: true } } },
+        orderBy: { startTime: "asc" },
+        take: 10,
+      }),
     ]);
 
-  return { totalEvents, totalAttendances, todayEvents, todayAttendances, topEvents, recentAttendances };
+  return { totalEvents, totalAttendances, totalRsvps, todayEvents, todayAttendances, topEvents, recentAttendances, upcomingWithRsvps };
 }
 
 export default async function HostDashboardPage() {
-  const { totalEvents, totalAttendances, todayEvents, todayAttendances, topEvents, recentAttendances } =
+  const { totalEvents, totalAttendances, totalRsvps, todayEvents, todayAttendances, topEvents, recentAttendances, upcomingWithRsvps } =
     await getStats();
 
   return (
@@ -55,10 +63,11 @@ export default async function HostDashboardPage() {
       </div>
 
       {/* Stats grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <StatCard label="Total Sessions" value={totalEvents} icon={CalendarDays} color="amber" />
         <StatCard label="Total Check-ins" value={totalAttendances} icon={CheckSquare} color="emerald" />
-        <StatCard label="Sessions Today" value={todayEvents} icon={TrendingUp} color="purple" />
+        <StatCard label="Total RSVPs" value={totalRsvps} icon={Ticket} color="purple" />
+        <StatCard label="Sessions Today" value={todayEvents} icon={TrendingUp} color="sky" />
         <StatCard label="Check-ins Today" value={todayAttendances} icon={Users} color="orange" />
       </div>
 
@@ -74,7 +83,10 @@ export default async function HostDashboardPage() {
                 </span>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-stone-900 truncate">{e.title.split(" - ")[0]}</p>
-                  <EventBadge type={e.type} />
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <EventBadge type={e.type} />
+                    <span className="text-[10px] text-stone-400">{e._count.rsvps} RSVPs</span>
+                  </div>
                 </div>
                 <span className="text-sm font-bold text-stone-700">{e._count.attendances}</span>
               </div>
@@ -103,6 +115,54 @@ export default async function HostDashboardPage() {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* RSVP vs Attendance */}
+      <div className="bg-white border border-stone-200 rounded-xl p-5">
+        <h2 className="font-semibold text-stone-900 mb-1">RSVP vs Attendance</h2>
+        <p className="text-xs text-stone-400 mb-4">Upcoming & today's sessions — how many who RSVP'd actually showed up</p>
+        {upcomingWithRsvps.length === 0 ? (
+          <p className="text-sm text-stone-400 text-center py-4">No upcoming sessions.</p>
+        ) : (
+          <div className="space-y-3">
+            {upcomingWithRsvps.map((e) => {
+              const rsvps = e._count.rsvps;
+              const attended = e._count.attendances;
+              const showRate = rsvps > 0 && attended > 0;
+              const rate = rsvps > 0 ? Math.round((attended / rsvps) * 100) : 0;
+              const isPast = new Date(e.endTime) < new Date();
+              return (
+                <div key={e.id} className="flex items-center gap-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-stone-900 truncate">{e.title.split(" - ")[0]}</p>
+                    <p className="text-xs text-stone-400">
+                      {formatToronto(e.startTime, "EEE, MMM d · HH:mm")}
+                      {e.capacity ? ` · ${e.capacity} spots` : ""}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3 flex-shrink-0">
+                    <div className="text-center">
+                      <p className="text-sm font-bold text-purple-600">{rsvps}</p>
+                      <p className="text-[10px] text-stone-400">RSVPs</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-sm font-bold text-emerald-600">{attended}</p>
+                      <p className="text-[10px] text-stone-400">Showed</p>
+                    </div>
+                    {isPast && showRate && (
+                      <div className="text-center">
+                        <p className={`text-sm font-bold ${rate >= 70 ? "text-green-600" : rate >= 40 ? "text-amber-600" : "text-red-500"}`}>
+                          {rate}%
+                        </p>
+                        <p className="text-[10px] text-stone-400">Rate</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

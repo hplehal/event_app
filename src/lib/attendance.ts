@@ -7,7 +7,8 @@ export type AttendanceErrorCode =
   | "EVENT_NOT_FOUND"
   | "ALREADY_REGISTERED"
   | "TOO_EARLY"
-  | "OVERLAP_CONFLICT";
+  | "OVERLAP_CONFLICT"
+  | "EVENT_FULL";
 
 export type AttendanceResult =
   | {
@@ -34,7 +35,10 @@ export async function registerAttendance(
   }
 
   // 2. Resolve event
-  const event = await prisma.event.findUnique({ where: { id: eventId } });
+  const event = await prisma.event.findUnique({
+    where: { id: eventId },
+    include: { _count: { select: { attendances: true } } },
+  });
   if (!event) {
     return { success: false, code: "EVENT_NOT_FOUND", message: "Event not found." };
   }
@@ -51,7 +55,16 @@ export async function registerAttendance(
     };
   }
 
-  // 4. 2-hour window check (in Toronto time)
+  // 4. Capacity check
+  if (event.capacity && event._count.attendances >= event.capacity) {
+    return {
+      success: false,
+      code: "EVENT_FULL",
+      message: `This event is full (${event.capacity}/${event.capacity}).`,
+    };
+  }
+
+  // 5. 2-hour window check (in Toronto time)
   const nowUTC = new Date();
   const twoHoursBefore = new Date(event.startTime.getTime() - 2 * 60 * 60 * 1000);
   if (nowUTC < twoHoursBefore) {

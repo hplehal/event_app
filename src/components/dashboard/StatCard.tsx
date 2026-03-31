@@ -5,7 +5,7 @@ interface StatCardProps {
   label: string;
   value: number | string;
   icon: LucideIcon;
-  color?: "amber" | "emerald" | "purple" | "orange";
+  color?: "amber" | "emerald" | "purple" | "orange" | "sky";
   className?: string;
 }
 
@@ -29,6 +29,11 @@ const colorMap = {
     card: "border-orange-100",
     iconBg: "bg-gradient-to-br from-orange-400 to-orange-600",
     text: "text-orange-600",
+  },
+  sky: {
+    card: "border-sky-100",
+    iconBg: "bg-gradient-to-br from-sky-400 to-sky-600",
+    text: "text-sky-600",
   },
 };
 

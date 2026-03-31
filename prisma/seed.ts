@@ -67,52 +67,54 @@ interface SessionTemplate {
   minute: number;
   /** Probability that this session actually runs on a given scheduled day (simulates cancellations/off weeks). */
   probability: number;
+  /** Max people for this session. */
+  capacity: number;
 }
 
 // Realistic recurring schedule for a 2-court gym + 1 outdoor sand court
 const RECURRING_SESSIONS: SessionTemplate[] = [
   // ── Monday ──
-  { title: "Open Gym", type: "OPEN_COURT", location: "Main Gym", durationMin: 90, days: [1], hour: 7, minute: 0, probability: 0.6 },
-  { title: "Co-Ed Rec Volleyball", type: "VOLLEYBALL", location: "Court 1", durationMin: 90, days: [1], hour: 18, minute: 30, probability: 0.9 },
-  { title: "Monday Night League", type: "LEAGUE", location: "Court 1", durationMin: 120, days: [1], hour: 20, minute: 0, probability: 0.85 },
+  { title: "Open Gym", type: "OPEN_COURT", location: "Main Gym", durationMin: 90, days: [1], hour: 7, minute: 0, probability: 0.6, capacity: 20 },
+  { title: "Co-Ed Rec Volleyball", type: "VOLLEYBALL", location: "Court 1", durationMin: 90, days: [1], hour: 18, minute: 30, probability: 0.9, capacity: 12 },
+  { title: "Monday Night League", type: "LEAGUE", location: "Court 1", durationMin: 120, days: [1], hour: 20, minute: 0, probability: 0.85, capacity: 16 },
 
   // ── Tuesday ──
-  { title: "Beginner Tennis Clinic", type: "TENNIS", location: "Court 2", durationMin: 60, days: [2], hour: 10, minute: 0, probability: 0.7 },
-  { title: "Drop-In Basketball", type: "BASKETBALL", location: "Main Gym", durationMin: 120, days: [2], hour: 18, minute: 0, probability: 0.85 },
-  { title: "Sand Volleyball Open", type: "VOLLEYBALL", location: "Sand Court", durationMin: 90, days: [2], hour: 19, minute: 0, probability: 0.5 },
+  { title: "Beginner Tennis Clinic", type: "TENNIS", location: "Court 2", durationMin: 60, days: [2], hour: 10, minute: 0, probability: 0.7, capacity: 8 },
+  { title: "Drop-In Basketball", type: "BASKETBALL", location: "Main Gym", durationMin: 120, days: [2], hour: 18, minute: 0, probability: 0.85, capacity: 14 },
+  { title: "Sand Volleyball Open", type: "VOLLEYBALL", location: "Sand Court", durationMin: 90, days: [2], hour: 19, minute: 0, probability: 0.5, capacity: 10 },
 
   // ── Wednesday ──
-  { title: "Indoor Soccer 5v5", type: "SOCCER", location: "Main Gym", durationMin: 90, days: [3], hour: 12, minute: 0, probability: 0.65 },
-  { title: "Competitive Volleyball", type: "VOLLEYBALL", location: "Court 1", durationMin: 120, days: [3], hour: 19, minute: 0, probability: 0.9 },
+  { title: "Indoor Soccer 5v5", type: "SOCCER", location: "Main Gym", durationMin: 90, days: [3], hour: 12, minute: 0, probability: 0.65, capacity: 10 },
+  { title: "Competitive Volleyball", type: "VOLLEYBALL", location: "Court 1", durationMin: 120, days: [3], hour: 19, minute: 0, probability: 0.9, capacity: 12 },
 
   // ── Thursday ──
-  { title: "Open Court Session", type: "OPEN_COURT", location: "Court 2", durationMin: 120, days: [4], hour: 9, minute: 0, probability: 0.5 },
-  { title: "Mixed 6s Volleyball", type: "VOLLEYBALL", location: "Court 1", durationMin: 90, days: [4], hour: 18, minute: 30, probability: 0.9 },
-  { title: "3-on-3 Basketball", type: "BASKETBALL", location: "Main Gym", durationMin: 90, days: [4], hour: 20, minute: 0, probability: 0.75 },
+  { title: "Open Court Session", type: "OPEN_COURT", location: "Court 2", durationMin: 120, days: [4], hour: 9, minute: 0, probability: 0.5, capacity: 16 },
+  { title: "Mixed 6s Volleyball", type: "VOLLEYBALL", location: "Court 1", durationMin: 90, days: [4], hour: 18, minute: 30, probability: 0.9, capacity: 12 },
+  { title: "3-on-3 Basketball", type: "BASKETBALL", location: "Main Gym", durationMin: 90, days: [4], hour: 20, minute: 0, probability: 0.75, capacity: 12 },
 
   // ── Friday ──
-  { title: "Friday Night League", type: "LEAGUE", location: "Court 1", durationMin: 120, days: [5], hour: 19, minute: 0, probability: 0.85 },
-  { title: "Drop-In Volleyball", type: "VOLLEYBALL", location: "Court 2", durationMin: 90, days: [5], hour: 19, minute: 0, probability: 0.7 },
+  { title: "Friday Night League", type: "LEAGUE", location: "Court 1", durationMin: 120, days: [5], hour: 19, minute: 0, probability: 0.85, capacity: 16 },
+  { title: "Drop-In Volleyball", type: "VOLLEYBALL", location: "Court 2", durationMin: 90, days: [5], hour: 19, minute: 0, probability: 0.7, capacity: 12 },
 
   // ── Saturday ──
-  { title: "Morning Open Gym", type: "OPEN_COURT", location: "Main Gym", durationMin: 120, days: [6], hour: 8, minute: 0, probability: 0.8 },
-  { title: "Recreational Volleyball", type: "VOLLEYBALL", location: "Court 1", durationMin: 120, days: [6], hour: 10, minute: 0, probability: 0.85 },
-  { title: "Youth Basketball Training", type: "BASKETBALL", location: "Main Gym", durationMin: 90, days: [6], hour: 13, minute: 0, probability: 0.65 },
-  { title: "Doubles Tennis Round Robin", type: "TENNIS", location: "Court 2", durationMin: 90, days: [6], hour: 14, minute: 0, probability: 0.6 },
+  { title: "Morning Open Gym", type: "OPEN_COURT", location: "Main Gym", durationMin: 120, days: [6], hour: 8, minute: 0, probability: 0.8, capacity: 20 },
+  { title: "Recreational Volleyball", type: "VOLLEYBALL", location: "Court 1", durationMin: 120, days: [6], hour: 10, minute: 0, probability: 0.85, capacity: 14 },
+  { title: "Youth Basketball Training", type: "BASKETBALL", location: "Main Gym", durationMin: 90, days: [6], hour: 13, minute: 0, probability: 0.65, capacity: 12 },
+  { title: "Doubles Tennis Round Robin", type: "TENNIS", location: "Court 2", durationMin: 90, days: [6], hour: 14, minute: 0, probability: 0.6, capacity: 8 },
 
   // ── Sunday (light day) ──
-  { title: "Sunday Open Court", type: "OPEN_COURT", location: "Main Gym", durationMin: 120, days: [0], hour: 10, minute: 0, probability: 0.4 },
-  { title: "Futsal Drop-In", type: "SOCCER", location: "Main Gym", durationMin: 90, days: [0], hour: 15, minute: 0, probability: 0.35 },
+  { title: "Sunday Open Court", type: "OPEN_COURT", location: "Main Gym", durationMin: 120, days: [0], hour: 10, minute: 0, probability: 0.4, capacity: 16 },
+  { title: "Futsal Drop-In", type: "SOCCER", location: "Main Gym", durationMin: 90, days: [0], hour: 15, minute: 0, probability: 0.35, capacity: 10 },
 ];
 
 // One-off special events sprinkled into the calendar
 const SPECIAL_EVENTS = [
-  { title: "Tito's Volleyball Classic", type: "TOURNAMENT", location: "Court 1 & 2", durationMin: 300, hour: 9, minute: 0 },
-  { title: "Spring Smash Tournament", type: "TOURNAMENT", location: "Court 1", durationMin: 240, hour: 10, minute: 0 },
-  { title: "End-of-Season BBQ", type: "OTHER", location: "Patio Area", durationMin: 180, hour: 16, minute: 0 },
-  { title: "Captain's Meeting", type: "OTHER", location: "Meeting Room", durationMin: 60, hour: 19, minute: 0 },
-  { title: "Referee Training Session", type: "OTHER", location: "Court 2", durationMin: 90, hour: 11, minute: 0 },
-  { title: "Charity Fundraiser Game", type: "TOURNAMENT", location: "Main Gym", durationMin: 180, hour: 13, minute: 0 },
+  { title: "Tito's Volleyball Classic", type: "TOURNAMENT", location: "Court 1 & 2", durationMin: 300, hour: 9, minute: 0, capacity: 24 },
+  { title: "Spring Smash Tournament", type: "TOURNAMENT", location: "Court 1", durationMin: 240, hour: 10, minute: 0, capacity: 20 },
+  { title: "End-of-Season BBQ", type: "OTHER", location: "Patio Area", durationMin: 180, hour: 16, minute: 0, capacity: 40 },
+  { title: "Captain's Meeting", type: "OTHER", location: "Meeting Room", durationMin: 60, hour: 19, minute: 0, capacity: 15 },
+  { title: "Referee Training Session", type: "OTHER", location: "Court 2", durationMin: 90, hour: 11, minute: 0, capacity: 10 },
+  { title: "Charity Fundraiser Game", type: "TOURNAMENT", location: "Main Gym", durationMin: 180, hour: 13, minute: 0, capacity: 30 },
 ];
 
 function pickRandom<T>(arr: T[]): T {
@@ -136,6 +138,7 @@ function torontoToUTC(year: number, month: number, day: number, hour: number, mi
 async function main() {
   console.log("Seeding database...");
 
+  await prisma.rsvp.deleteMany();
   await prisma.attendance.deleteMany();
   await prisma.event.deleteMany();
   await prisma.host.deleteMany();
@@ -204,6 +207,7 @@ async function main() {
         startTime: startUTC,
         endTime: endUTC,
         location: session.location,
+        capacity: session.capacity,
         hostId: host.id,
       });
     }
@@ -234,6 +238,7 @@ async function main() {
       startTime: startUTC,
       endTime: endUTC,
       location: special.location,
+      capacity: special.capacity,
       hostId: host.id,
     });
   }
@@ -305,6 +310,61 @@ async function main() {
   }
 
   console.log(`Created ${totalAttendances} attendance records`);
+
+  // ── Generate RSVP Records ─────────────────────────────────────────────────
+  // RSVPs are for upcoming events + some past events (to show show-rate data)
+  const allEventsForRsvp = await prisma.event.findMany({
+    where: {
+      startTime: {
+        gte: new Date(nowUTC.getTime() - 14 * 24 * 60 * 60 * 1000), // last 2 weeks + future
+      },
+    },
+    orderBy: { startTime: "asc" },
+  });
+
+  const rsvpBatch: any[] = [];
+  const rsvpSeen = new Set<string>();
+
+  for (const event of allEventsForRsvp) {
+    const cap = event.capacity ?? 12;
+    const rsvpPool: typeof users = [];
+
+    // Regulars RSVP more often
+    for (const u of regulars) {
+      if (Math.random() < 0.7) rsvpPool.push(u);
+    }
+    for (const u of semiRegulars) {
+      if (Math.random() < 0.4) rsvpPool.push(u);
+    }
+    for (const u of casuals) {
+      if (Math.random() < 0.15) rsvpPool.push(u);
+    }
+
+    // Cap RSVPs to capacity
+    const rsvpers = shuffle(rsvpPool).slice(0, cap);
+
+    for (const user of rsvpers) {
+      const key = `${user.id}_${event.id}`;
+      if (rsvpSeen.has(key)) continue;
+      rsvpSeen.add(key);
+
+      // RSVP created 1-3 days before event start
+      const daysBefore = 1 + Math.floor(Math.random() * 3);
+      const createdAt = new Date(event.startTime.getTime() - daysBefore * 24 * 60 * 60 * 1000);
+
+      rsvpBatch.push({
+        userId: user.id,
+        eventId: event.id,
+        createdAt,
+      });
+    }
+  }
+
+  for (let i = 0; i < rsvpBatch.length; i += 100) {
+    await prisma.rsvp.createMany({ data: rsvpBatch.slice(i, i + 100) });
+  }
+
+  console.log(`Created ${rsvpBatch.length} RSVP records`);
   console.log("Seeding complete!");
 }
 
