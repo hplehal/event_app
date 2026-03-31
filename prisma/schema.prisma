@@ -18,6 +18,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   attendances   Attendance[]
+  rsvps         Rsvp[]
 }
 
 model Account {
@@ -72,11 +73,13 @@ model Event {
   startTime   DateTime
   endTime     DateTime
   location    String?
+  capacity    Int?
   hostId      String
   host        Host         @relation(fields: [hostId], references: [id])
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   attendances Attendance[]
+  rsvps       Rsvp[]
 
   @@index([startTime])
   @@index([hostId])
@@ -95,4 +98,17 @@ model Attendance {
   @@index([eventId])
   @@index([userId])
   @@index([scannedAt])
+}
+
+model Rsvp {
+  id        String   @id @default(cuid())
+  userId    String
+  eventId   String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventId])
+  @@index([eventId])
+  @@index([userId])
 }

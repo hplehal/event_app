@@ -3,6 +3,7 @@ import { StatCard } from "@/components/dashboard/StatCard";
 import { EventCard } from "@/components/events/EventCard";
 import { FeaturedEvents } from "@/components/events/FeaturedEvents";
 import { CalendarCheck, TrendingUp, CalendarDays, Users, Flame } from "lucide-react";
+import { RsvpButton } from "@/components/events/RsvpButton";
 
 export const dynamic = "force-dynamic";
 import { prisma } from "@/lib/prisma";
@@ -34,14 +35,18 @@ async function getDashboardData(userId: string) {
     TORONTO_TZ
   );
 
-  const [allToday, myTodayAttendances, weekAttendanceCount, totalSessions] = await Promise.all([
+  const [allToday, myTodayAttendances, myRsvps, weekAttendanceCount, totalSessions] = await Promise.all([
     prisma.event.findMany({
       where: { startTime: { gte: todayStart, lte: todayEnd } },
-      include: { _count: { select: { attendances: true } } },
+      include: { _count: { select: { attendances: true, rsvps: true } } },
       orderBy: { startTime: "asc" },
     }),
     prisma.attendance.findMany({
       where: { userId, scannedAt: { gte: todayStart, lte: todayEnd } },
+      select: { eventId: true },
+    }),
+    prisma.rsvp.findMany({
+      where: { userId },
       select: { eventId: true },
     }),
     prisma.attendance.count({
@@ -53,10 +58,11 @@ async function getDashboardData(userId: string) {
   ]);
 
   const myEventIds = myTodayAttendances.map((a) => a.eventId);
+  const myRsvpIds = myRsvps.map((r) => r.eventId);
   const happeningNow = allToday.filter((e) => e.startTime <= nowUTC && e.endTime >= nowUTC);
   const startingSoon = allToday.filter((e) => e.startTime > nowUTC && e.startTime <= twoHoursLater);
 
-  return { allToday, happeningNow, startingSoon, myEventIds, weekAttendanceCount, totalSessions };
+  return { allToday, happeningNow, startingSoon, myEventIds, myRsvpIds, weekAttendanceCount, totalSessions };
 }
 
 /** Find upcoming events that match the user's most attended event types and locations. */
@@ -99,7 +105,7 @@ async function getFeaturedEvents(userId: string) {
       startTime: { gt: nowUTC },
       type: { in: topTypes },
     },
-    include: { _count: { select: { attendances: true } } },
+    include: { _count: { select: { attendances: true, rsvps: true } } },
     orderBy: { startTime: "asc" },
     take: 20,
   });
@@ -129,7 +135,7 @@ export default async function DashboardPage() {
     getDashboardData(userId),
     getFeaturedEvents(userId),
   ]);
-  const { allToday, happeningNow, startingSoon, myEventIds, weekAttendanceCount, totalSessions } = dashData;
+  const { allToday, happeningNow, startingSoon, myEventIds, myRsvpIds, weekAttendanceCount, totalSessions } = dashData;
 
   const name = session!.user.name?.split(" ")[0] ?? "there";
 
@@ -164,7 +170,9 @@ export default async function DashboardPage() {
               </h2>
               <div className="space-y-2">
                 {happeningNow.map((e) => (
-                  <EventCard key={e.id} event={e} isHappeningNow isRegistered={myEventIds.includes(e.id)} showAttendanceCount={false} />
+                  <div key={e.id} className="flex flex-col gap-1">
+                    <EventCard event={e} isHappeningNow isRegistered={myEventIds.includes(e.id)} isRsvped={myRsvpIds.includes(e.id)} showAttendanceCount={false} />
+                  </div>
                 ))}
               </div>
             </section>
@@ -179,7 +187,12 @@ export default async function DashboardPage() {
               </h2>
               <div className="space-y-2">
                 {startingSoon.map((e) => (
-                  <EventCard key={e.id} event={e} isRegistered={myEventIds.includes(e.id)} showAttendanceCount={false} />
+                  <div key={e.id} className="flex items-center gap-2">
+                    <div className="flex-1 min-w-0">
+                      <EventCard event={e} isRegistered={myEventIds.includes(e.id)} isRsvped={myRsvpIds.includes(e.id)} showAttendanceCount={false} />
+                    </div>
+                    <RsvpButton eventId={e.id} initialRsvped={myRsvpIds.includes(e.id)} initialCount={e._count.rsvps} capacity={e.capacity} />
+                  </div>
                 ))}
               </div>
             </section>
@@ -194,7 +207,7 @@ export default async function DashboardPage() {
           )}
 
           {/* Featured For You */}
-          <FeaturedEvents events={featured} />
+          <FeaturedEvents events={featured} rsvpIds={myRsvpIds} />
         </div>
 
         {/* Right column — today's schedule */}
@@ -213,9 +226,17 @@ export default async function DashboardPage() {
               <div className="space-y-2 lg:max-h-[calc(100vh-280px)] lg:overflow-y-auto lg:pr-1">
                 {allToday.map((e) => {
                   const isPast = new Date(e.endTime) < new Date();
+                  const isFuture = new Date(e.startTime) > new Date();
                   return (
                     <div key={e.id} className={isPast ? "opacity-40" : ""}>
-                      <EventCard event={e} isRegistered={myEventIds.includes(e.id)} showAttendanceCount={false} />
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 min-w-0">
+                          <EventCard event={e} isRegistered={myEventIds.includes(e.id)} isRsvped={myRsvpIds.includes(e.id)} showAttendanceCount={false} />
+                        </div>
+                        {!isPast && (
+                          <RsvpButton eventId={e.id} initialRsvped={myRsvpIds.includes(e.id)} initialCount={e._count.rsvps} capacity={e.capacity} eventEnded={isPast} />
+                        )}
+                      </div>
                     </div>
                   );
                 })}

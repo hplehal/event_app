@@ -20,7 +20,8 @@ interface Event {
   startTime: string;
   endTime: string;
   location?: string | null;
-  _count: { attendances: number };
+  capacity?: number | null;
+  _count: { attendances: number; rsvps: number };
 }
 
 function todayStr() {
@@ -35,7 +36,7 @@ export default function HostEventsPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState({
-    title: "", type: "VOLLEYBALL", description: "", startTime: "", endTime: "", location: "",
+    title: "", type: "VOLLEYBALL", description: "", startTime: "", endTime: "", location: "", capacity: "",
   });
 
   useEffect(() => {
@@ -69,9 +70,13 @@ export default function HostEventsPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...form,
+          title: form.title,
+          type: form.type,
+          description: form.description,
           startTime: new Date(form.startTime).toISOString(),
           endTime: new Date(form.endTime).toISOString(),
+          location: form.location,
+          capacity: form.capacity ? parseInt(form.capacity, 10) : null,
         }),
       });
       if (!res.ok) {
@@ -81,7 +86,7 @@ export default function HostEventsPage() {
       }
       toast.success("Event created successfully.");
       setShowCreate(false);
-      setForm({ title: "", type: "VOLLEYBALL", description: "", startTime: "", endTime: "", location: "" });
+      setForm({ title: "", type: "VOLLEYBALL", description: "", startTime: "", endTime: "", location: "", capacity: "" });
       // Refresh
       const params = new URLSearchParams({ date: dateStr });
       if (filterType !== "ALL") params.set("type", filterType);
@@ -149,7 +154,7 @@ export default function HostEventsPage() {
         ) : (
           <div className="space-y-2">
             {events.map((e) => (
-              <EventCard key={e.id} event={e} showAttendanceCount />
+              <EventCard key={e.id} event={e} showAttendanceCount showRsvpCount />
             ))}
           </div>
         )}
@@ -187,9 +192,15 @@ export default function HostEventsPage() {
                   <Input type="datetime-local" value={form.endTime} onChange={(e) => setForm({ ...form, endTime: e.target.value })} className="mt-1" required />
                 </div>
               </div>
-              <div>
-                <Label>Location (optional)</Label>
-                <Input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="e.g. Court 1, Main Gym" className="mt-1" />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label>Location (optional)</Label>
+                  <Input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="e.g. Court 1" className="mt-1" />
+                </div>
+                <div>
+                  <Label>Capacity (optional)</Label>
+                  <Input type="number" min="1" value={form.capacity} onChange={(e) => setForm({ ...form, capacity: e.target.value })} placeholder="e.g. 12" className="mt-1" />
+                </div>
               </div>
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={() => setShowCreate(false)}>Cancel</Button>

@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
   const events = await prisma.event.findMany({
     where,
     include: {
-      _count: { select: { attendances: true } },
+      _count: { select: { attendances: true, rsvps: true } },
       host: { select: { id: true, name: true } },
     },
     orderBy: { startTime: "asc" },
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { title, type, description, startTime, endTime, location } = await request.json();
+    const { title, type, description, startTime, endTime, location, capacity } = await request.json();
 
     if (!title || !type || !startTime || !endTime) {
       return NextResponse.json({ error: "title, type, startTime, endTime are required." }, { status: 400 });
@@ -83,9 +83,10 @@ export async function POST(request: NextRequest) {
         startTime: new Date(startTime),
         endTime: new Date(endTime),
         location,
+        capacity: capacity != null ? parseInt(capacity, 10) : null,
         hostId: hostSession.hostId,
       },
-      include: { _count: { select: { attendances: true } } },
+      include: { _count: { select: { attendances: true, rsvps: true } } },
     });
 
     return NextResponse.json(event, { status: 201 });

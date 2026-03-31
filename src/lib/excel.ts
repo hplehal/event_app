@@ -31,11 +31,11 @@ export async function generateReport(from: Date, to: Date): Promise<Buffer> {
   const wb = XLSX.utils.book_new();
 
   // Fetch all data needed
-  const [events, attendances, allUsers] = await Promise.all([
+  const [events, attendances, rsvps, allUsers] = await Promise.all([
     prisma.event.findMany({
       where: { startTime: { gte: from, lte: to } },
       include: {
-        _count: { select: { attendances: true } },
+        _count: { select: { attendances: true, rsvps: true } },
         host: { select: { name: true, email: true } },
       },
       orderBy: { startTime: "asc" },
@@ -47,6 +47,14 @@ export async function generateReport(from: Date, to: Date): Promise<Buffer> {
         user: { select: { name: true, email: true, qrCode: true } },
       },
       orderBy: { scannedAt: "asc" },
+    }),
+    prisma.rsvp.findMany({
+      where: { event: { startTime: { gte: from, lte: to } } },
+      include: {
+        event: { select: { id: true, title: true, type: true, startTime: true, location: true } },
+        user: { select: { name: true, email: true } },
+      },
+      orderBy: { createdAt: "asc" },
     }),
     prisma.user.findMany({
       include: {
@@ -78,21 +86,29 @@ export async function generateReport(from: Date, to: Date): Promise<Buffer> {
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(logSheet), "Attendance Log");
 
   // ── Sheet 2: All Events ───────────────────────────────────────────────────
-  const eventsSheet = events.map((e) => ({
-    "Title": e.title,
-    "Type": typeLabel(e.type),
-    "Date": torontoDateStr(e.startTime),
-    "Day": torontoDayName(e.startTime),
-    "Start": torontoTimeStr(e.startTime),
-    "End": torontoTimeStr(e.endTime),
-    "Duration (min)": Math.round(
-      (e.endTime.getTime() - e.startTime.getTime()) / 60000
-    ),
-    "Location": e.location ?? "",
-    "Host": e.host.name,
-    "Check-ins": e._count.attendances,
-    "Created": torontoDateTimeStr(e.createdAt),
-  }));
+  const eventsSheet = events.map((e) => {
+    const rsvpCount = e._count.rsvps;
+    const checkins = e._count.attendances;
+    const showRate = rsvpCount > 0 && checkins > 0;
+    return {
+      "Title": e.title,
+      "Type": typeLabel(e.type),
+      "Date": torontoDateStr(e.startTime),
+      "Day": torontoDayName(e.startTime),
+      "Start": torontoTimeStr(e.startTime),
+      "End": torontoTimeStr(e.endTime),
+      "Duration (min)": Math.round(
+        (e.endTime.getTime() - e.startTime.getTime()) / 60000
+      ),
+      "Location": e.location ?? "",
+      "Capacity": e.capacity ?? "–",
+      "RSVPs": rsvpCount,
+      "Check-ins": checkins,
+      "RSVP Show Rate": showRate ? `${Math.round((checkins / rsvpCount) * 100)}%` : "–",
+      "Host": e.host.name,
+      "Created": torontoDateTimeStr(e.createdAt),
+    };
+  });
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(eventsSheet), "All Events");
 
   // ── Sheet 3: Player Directory ─────────────────────────────────────────────
@@ -254,14 +270,65 @@ export async function generateReport(from: Date, to: Date): Promise<Buffer> {
     }));
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(trendSheet), "Daily Trend");
 
-  // ── Sheet 11: Summary ─────────────────────────────────────────────────────
+  // ── Sheet 11: RSVP Log ─────────────────────────────────────────────────────
+  const rsvpLogSheet = rsvps.map((r) => ({
+    "Player Name": r.user.name,
+    "Player Email": r.user.email,
+    "Event": r.event.title,
+    "Event Type": typeLabel(r.event.type),
+    "Event Date": torontoDateStr(r.event.startTime),
+    "Location": r.event.location ?? "",
+    "RSVP'd At": torontoDateTimeStr(r.createdAt),
+  }));
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rsvpLogSheet), "RSVP Log");
+
+  // ── Sheet 12: RSVP vs Attendance ──────────────────────────────────────────
+  // Build a lookup of who attended each event
+  const attendedByEvent: Record<string, Set<string>> = {};
+  for (const a of attendances) {
+    if (!attendedByEvent[a.event.title]) attendedByEvent[a.event.title] = new Set();
+    attendedByEvent[a.event.title].add(a.user.email);
+  }
+  const rsvpByEvent: Record<string, { title: string; type: string; date: Date; capacity: number | null; rsvps: Set<string> }> = {};
+  for (const r of rsvps) {
+    if (!rsvpByEvent[r.event.id]) {
+      rsvpByEvent[r.event.id] = { title: r.event.title, type: r.event.type, date: r.event.startTime, capacity: null, rsvps: new Set() };
+    }
+    rsvpByEvent[r.event.id].rsvps.add(r.user.email);
+  }
+  // Match with event capacity
+  for (const e of events) {
+    if (rsvpByEvent[e.id]) rsvpByEvent[e.id].capacity = e.capacity;
+  }
+  const rsvpVsAttSheet = Object.entries(rsvpByEvent)
+    .sort(([, a], [, b]) => a.date.getTime() - b.date.getTime())
+    .map(([eventId, d]) => {
+      const attended = attendedByEvent[d.title] ?? new Set();
+      const rsvpEmails = d.rsvps;
+      const showedUp = [...rsvpEmails].filter((email) => attended.has(email)).length;
+      return {
+        "Event": d.title,
+        "Type": typeLabel(d.type),
+        "Date": torontoDateStr(d.date),
+        "Capacity": d.capacity ?? "–",
+        "RSVPs": rsvpEmails.size,
+        "Showed Up": showedUp,
+        "No-Shows": rsvpEmails.size - showedUp,
+        "Show Rate": rsvpEmails.size > 0 ? `${Math.round((showedUp / rsvpEmails.size) * 100)}%` : "–",
+      };
+    });
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rsvpVsAttSheet), "RSVP vs Attendance");
+
+  // ── Sheet 13: Summary ─────────────────────────────────────────────────────
   const uniquePlayersTotal = new Set(attendances.map((a) => a.user.email));
   const summarySheet = [
     { "Metric": "Report Period", "Value": `${torontoDateStr(from)} to ${torontoDateStr(to)}` },
     { "Metric": "Total Sessions", "Value": events.length.toString() },
     { "Metric": "Total Check-ins", "Value": attendances.length.toString() },
     { "Metric": "Unique Players", "Value": uniquePlayersTotal.size.toString() },
+    { "Metric": "Total RSVPs", "Value": rsvps.length.toString() },
     { "Metric": "Avg Check-ins / Session", "Value": events.length > 0 ? (Math.round((attendances.length / events.length) * 10) / 10).toString() : "0" },
+    { "Metric": "Overall RSVP Show Rate", "Value": rsvps.length > 0 ? `${Math.round((attendances.length / rsvps.length) * 100)}%` : "N/A" },
     { "Metric": "Avg Sessions / Day", "Value": (() => {
       const days = new Set(events.map((e) => torontoDateStr(e.startTime)));
       return days.size > 0 ? (Math.round((events.length / days.size) * 10) / 10).toString() : "0";

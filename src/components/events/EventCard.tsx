@@ -1,6 +1,6 @@
 import { formatToronto } from "@/lib/utils";
 import { EventBadge } from "./EventBadge";
-import { MapPin, Users, CheckCircle } from "lucide-react";
+import { MapPin, Users, CheckCircle, CalendarCheck, Ticket } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Event {
@@ -10,14 +10,17 @@ interface Event {
   startTime: string | Date;
   endTime: string | Date;
   location?: string | null;
-  _count?: { attendances: number };
+  capacity?: number | null;
+  _count?: { attendances: number; rsvps?: number };
 }
 
 interface EventCardProps {
   event: Event;
   isRegistered?: boolean;
+  isRsvped?: boolean;
   isHappeningNow?: boolean;
   showAttendanceCount?: boolean;
+  showRsvpCount?: boolean;
   onClick?: () => void;
   className?: string;
 }
@@ -36,8 +39,10 @@ const TYPE_ACCENT: Record<string, string> = {
 export function EventCard({
   event,
   isRegistered,
+  isRsvped,
   isHappeningNow,
   showAttendanceCount,
+  showRsvpCount,
   onClick,
   className,
 }: EventCardProps) {
@@ -72,9 +77,14 @@ export function EventCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <p className="text-sm font-semibold text-stone-900 leading-tight truncate">{event.title}</p>
-            {isRegistered && (
-              <CheckCircle size={16} className="flex-shrink-0 text-amber-500 mt-0.5" />
-            )}
+            <div className="flex items-center gap-1 flex-shrink-0 mt-0.5">
+              {isRsvped && !isRegistered && (
+                <CalendarCheck size={15} className="text-amber-500" />
+              )}
+              {isRegistered && (
+                <CheckCircle size={15} className="text-green-500" />
+              )}
+            </div>
           </div>
           <div className="flex flex-wrap items-center gap-2 mt-1.5">
             <EventBadge type={event.type} />
@@ -88,6 +98,18 @@ export function EventCard({
               <span className="flex items-center gap-1 text-xs text-stone-400">
                 <Users size={11} />
                 {event._count.attendances}
+              </span>
+            )}
+            {showRsvpCount && event._count?.rsvps != null && (
+              <span className="flex items-center gap-1 text-xs text-stone-400">
+                <Ticket size={11} />
+                {event._count.rsvps}{event.capacity ? `/${event.capacity}` : ""}
+              </span>
+            )}
+            {!showRsvpCount && event.capacity != null && (
+              <span className="flex items-center gap-1 text-xs text-stone-400">
+                <Ticket size={11} />
+                {event.capacity} spots
               </span>
             )}
           </div>

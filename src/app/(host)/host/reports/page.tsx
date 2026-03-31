@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Download, BarChart3, Loader2, FileSpreadsheet, Users, MapPin, Calendar, TrendingUp, Trophy, ClipboardList, LayoutDashboard } from "lucide-react";
+import { Download, BarChart3, Loader2, FileSpreadsheet, Users, MapPin, Calendar, TrendingUp, Trophy, ClipboardList, LayoutDashboard, Ticket, GitCompare } from "lucide-react";
 import { toast } from "sonner";
 import { TORONTO_TZ } from "@/lib/utils";
 import { toZonedTime } from "date-fns-tz";
@@ -55,7 +55,9 @@ export default function ReportsPage() {
     { name: "Top 10 Events", description: "The 10 most attended sessions in the period, ranked by check-in count.", icon: Trophy, color: "text-amber-600 bg-amber-50" },
     { name: "Top Players", description: "Top 20 most active players with check-in counts and sports played.", icon: Users, color: "text-indigo-600 bg-indigo-50" },
     { name: "Daily Trend", description: "Day-by-day log: sessions run, check-ins, and unique players — great for spotting trends.", icon: TrendingUp, color: "text-rose-600 bg-rose-50" },
-    { name: "Summary", description: "High-level overview: totals, averages, busiest day/location/type, and report metadata.", icon: LayoutDashboard, color: "text-stone-600 bg-stone-100" },
+    { name: "RSVP Log", description: "Full log of all RSVPs — who signed up, for which event, and when they RSVP'd.", icon: Ticket, color: "text-violet-600 bg-violet-50" },
+    { name: "RSVP vs Attendance", description: "Compare RSVPs to actual check-ins per event — see show rates and no-shows.", icon: GitCompare, color: "text-cyan-600 bg-cyan-50" },
+    { name: "Summary", description: "High-level overview: totals, averages, RSVP show rate, busiest day/location/type.", icon: LayoutDashboard, color: "text-stone-600 bg-stone-100" },
   ];
 
   return (

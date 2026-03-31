@@ -2,6 +2,7 @@
 
 import { EventBadge } from "@/components/events/EventBadge";
 import { AddToCalendarButton } from "@/components/events/AddToCalendarButton";
+import { RsvpButton } from "@/components/events/RsvpButton";
 import { Star, MapPin } from "lucide-react";
 import { formatToronto } from "@/lib/utils";
 
@@ -12,14 +13,16 @@ interface FeaturedEvent {
   startTime: string | Date;
   endTime: string | Date;
   location?: string | null;
-  _count?: { attendances: number };
+  capacity?: number | null;
+  _count?: { attendances: number; rsvps?: number };
 }
 
 interface FeaturedEventsProps {
   events: FeaturedEvent[];
+  rsvpIds?: string[];
 }
 
-export function FeaturedEvents({ events }: FeaturedEventsProps) {
+export function FeaturedEvents({ events, rsvpIds = [] }: FeaturedEventsProps) {
   if (events.length === 0) return null;
 
   return (
@@ -53,7 +56,13 @@ export function FeaturedEvents({ events }: FeaturedEventsProps) {
                     {e.location}
                   </span>
                 )}
-                <div className="mt-2">
+                <div className="mt-2 flex items-center gap-2">
+                  <RsvpButton
+                    eventId={e.id}
+                    initialRsvped={rsvpIds.includes(e.id)}
+                    initialCount={e._count?.rsvps ?? 0}
+                    capacity={e.capacity}
+                  />
                   <AddToCalendarButton event={e} />
                 </div>
               </div>

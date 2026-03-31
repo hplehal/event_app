@@ -29,3 +29,6 @@ prisma/dev.db-journal
 # editor
 .vscode/
 .idea/
+
+# TypeScript
+tsconfig.tsbuildinfo
