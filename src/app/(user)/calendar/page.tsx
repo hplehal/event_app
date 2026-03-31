@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { WeeklyCalendar } from "@/components/events/WeeklyCalendar";
-import { EventCard } from "@/components/events/EventCard";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { EventBadge } from "@/components/events/EventBadge";
 import { MapPin, Clock } from "lucide-react";
@@ -42,10 +41,10 @@ export default function CalendarPage() {
   }, [weekOffset]);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6 space-y-4">
+    <div className="max-w-7xl mx-auto px-4 py-6 space-y-4">
       <div>
         <h1 className="text-2xl font-bold text-stone-900">Calendar</h1>
-        <p className="text-stone-500 text-sm">Weekly view of all events</p>
+        <p className="text-stone-500 text-sm">Weekly view of all court sessions and events</p>
       </div>
 
       <WeeklyCalendar
