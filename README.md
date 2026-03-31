@@ -12,7 +12,7 @@ A challenge project developed for **Professor Timothy Wong**'s class. TimApp is 
 
 ### As a User (attendee)
 
-1. Go to [andrejoaoborges.com](https://andrejoaoborges.com) and sign in with Google or a magic link sent to your email.
+1. Sign in with Google or a magic link sent to your email.
 2. After login you land directly on your **QR Code** page — a personal 7-character code unique to your account.
 3. Show the QR code to the host to register your attendance at an event.
 4. Use the bottom navigation to explore:
@@ -28,8 +28,7 @@ A challenge project developed for **Professor Timothy Wong**'s class. TimApp is 
 > **Demo credentials**
 > **Email:** `host@example.com`
 > **Password:** `password123`
-
-1. Go to [andrejoaoborges.com/host/login](https://andrejoaoborges.com/host/login) and sign in with the credentials above.
+1.
 2. You land on the **Scan** page — select the active event and point the camera at a user's QR code to register their attendance.
 3. If the camera isn't convenient, switch to the **Manual** tab and type in the 7-character code directly.
 
@@ -116,14 +115,10 @@ timapp/
 
 ## Deployment
 
-The app runs on a **Hetzner VPS** (2 vCPU, 2 GB RAM) served via **nginx** with **Let's Encrypt SSL** and kept alive with **PM2**.
-
 CI/CD is handled by **GitHub Actions** (free, unlimited for public repos). On every push to `main`:
 
 1. Installs dependencies and generates the Prisma client
-2. Builds the Next.js app on the Actions runner (which has AVX2 — the server CPU does not, so builds must happen off-server)
-3. SSHes into the server, wipes the old `.next` directory, and extracts the fresh build
-4. Restarts the app with PM2
+2. Builds the Next.jh PM2
 
 The database is SQLite and lives on the server's disk. It is not touched on deploy.
 
