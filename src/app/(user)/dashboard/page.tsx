@@ -1,5 +1,4 @@
 import { auth } from "@/lib/auth";
-import { TorontoClock } from "@/components/dashboard/TorontoClock";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { EventCard } from "@/components/events/EventCard";
 import { CalendarCheck, TrendingUp, CalendarDays, Users, Flame } from "lucide-react";
@@ -72,12 +71,9 @@ export default async function DashboardPage() {
       {/* Hero welcome banner */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-stone-900 via-stone-800 to-amber-900/40 p-6 md:p-8 text-white">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(245,166,35,0.15)_0%,_transparent_60%)]" />
-        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Hi, {name}</h1>
-            <p className="text-stone-300 text-sm mt-1">Here's what's on the courts today</p>
-          </div>
-          <TorontoClock />
+        <div className="relative">
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Hi, {name}</h1>
+          <p className="text-stone-300 text-sm mt-1">Here's what's on the courts today</p>
         </div>
       </div>
 

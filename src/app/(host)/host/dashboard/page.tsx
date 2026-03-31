@@ -1,7 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { EventBadge } from "@/components/events/EventBadge";
-import { TorontoClock } from "@/components/dashboard/TorontoClock";
 import { formatToronto, TORONTO_TZ } from "@/lib/utils";
 import { fromZonedTime, toZonedTime } from "date-fns-tz";
 import { CalendarDays, Users, CheckSquare, TrendingUp } from "lucide-react";
@@ -50,12 +49,9 @@ export default async function HostDashboardPage() {
   return (
     <div className="max-w-6xl space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-stone-900">Dashboard</h1>
-          <p className="text-stone-500 text-sm">Overview of all court events and player check-ins</p>
-        </div>
-        <TorontoClock />
+      <div>
+        <h1 className="text-2xl font-bold text-stone-900">Dashboard</h1>
+        <p className="text-stone-500 text-sm">Overview of all court events and player check-ins</p>
       </div>
 
       {/* Stats grid */}
