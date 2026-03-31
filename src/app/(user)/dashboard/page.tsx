@@ -1,12 +1,13 @@
 import { auth } from "@/lib/auth";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { EventCard } from "@/components/events/EventCard";
-import { CalendarCheck, TrendingUp, CalendarDays, Users, Flame } from "lucide-react";
+import { EventBadge } from "@/components/events/EventBadge";
+import { CalendarCheck, TrendingUp, CalendarDays, Users, Flame, Star, MapPin } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 import { prisma } from "@/lib/prisma";
 import { fromZonedTime, toZonedTime } from "date-fns-tz";
-import { TORONTO_TZ } from "@/lib/utils";
+import { TORONTO_TZ, formatToronto } from "@/lib/utils";
 
 async function getDashboardData(userId: string) {
   const nowUTC = new Date();
@@ -58,11 +59,77 @@ async function getDashboardData(userId: string) {
   return { allToday, happeningNow, startingSoon, myEventIds, weekAttendanceCount, totalSessions };
 }
 
+/** Find upcoming events that match the user's most attended event types and locations. */
+async function getFeaturedEvents(userId: string) {
+  const nowUTC = new Date();
+
+  // Get user's past attendances to find preferences
+  const pastAttendances = await prisma.attendance.findMany({
+    where: { userId },
+    include: { event: { select: { type: true, location: true, title: true } } },
+    orderBy: { scannedAt: "desc" },
+    take: 50,
+  });
+
+  if (pastAttendances.length === 0) return [];
+
+  // Count type frequency
+  const typeCounts: Record<string, number> = {};
+  const locationCounts: Record<string, number> = {};
+  const titleCounts: Record<string, number> = {};
+  for (const a of pastAttendances) {
+    typeCounts[a.event.type] = (typeCounts[a.event.type] ?? 0) + 1;
+    if (a.event.location) {
+      locationCounts[a.event.location] = (locationCounts[a.event.location] ?? 0) + 1;
+    }
+    // Normalize title (strip time suffix like "- 18:30")
+    const baseTitle = a.event.title.replace(/\s*-\s*\d{2}:\d{2}$/, "").trim();
+    titleCounts[baseTitle] = (titleCounts[baseTitle] ?? 0) + 1;
+  }
+
+  // Top types and locations the user frequents
+  const topTypes = Object.entries(typeCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([type]) => type);
+
+  // Fetch upcoming events matching their preferred types
+  const upcoming = await prisma.event.findMany({
+    where: {
+      startTime: { gt: nowUTC },
+      type: { in: topTypes },
+    },
+    include: { _count: { select: { attendances: true } } },
+    orderBy: { startTime: "asc" },
+    take: 20,
+  });
+
+  // Score each event: type match + location match + title match
+  const scored = upcoming.map((e) => {
+    let score = 0;
+    score += (typeCounts[e.type] ?? 0) * 2;
+    if (e.location && locationCounts[e.location]) {
+      score += locationCounts[e.location];
+    }
+    const baseTitle = e.title.replace(/\s*-\s*\d{2}:\d{2}$/, "").trim();
+    if (titleCounts[baseTitle]) {
+      score += titleCounts[baseTitle] * 3; // strong signal — same recurring session
+    }
+    return { event: e, score };
+  });
+
+  scored.sort((a, b) => b.score - a.score);
+  return scored.slice(0, 5).map((s) => s.event);
+}
+
 export default async function DashboardPage() {
   const session = await auth();
   const userId = session!.user.id;
-  const { allToday, happeningNow, startingSoon, myEventIds, weekAttendanceCount, totalSessions } =
-    await getDashboardData(userId);
+  const [dashData, featured] = await Promise.all([
+    getDashboardData(userId),
+    getFeaturedEvents(userId),
+  ]);
+  const { allToday, happeningNow, startingSoon, myEventIds, weekAttendanceCount, totalSessions } = dashData;
 
   const name = session!.user.name?.split(" ")[0] ?? "there";
 
@@ -79,25 +146,9 @@ export default async function DashboardPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-        <StatCard
-          label="Check-ins this week"
-          value={weekAttendanceCount}
-          icon={CalendarCheck}
-          color="amber"
-        />
-        <StatCard
-          label="Sessions today"
-          value={totalSessions}
-          icon={CalendarDays}
-          color="emerald"
-        />
-        <StatCard
-          label="Live right now"
-          value={happeningNow.length}
-          icon={Flame}
-          color="orange"
-          className="col-span-2 lg:col-span-1"
-        />
+        <StatCard label="Check-ins this week" value={weekAttendanceCount} icon={CalendarCheck} color="amber" />
+        <StatCard label="Sessions today" value={totalSessions} icon={CalendarDays} color="emerald" />
+        <StatCard label="Live right now" value={happeningNow.length} icon={Flame} color="orange" className="col-span-2 lg:col-span-1" />
       </div>
 
       {/* Desktop: two-column layout / Mobile: stacked */}
@@ -113,13 +164,7 @@ export default async function DashboardPage() {
               </h2>
               <div className="space-y-2">
                 {happeningNow.map((e) => (
-                  <EventCard
-                    key={e.id}
-                    event={e}
-                    isHappeningNow
-                    isRegistered={myEventIds.includes(e.id)}
-                    showAttendanceCount={false}
-                  />
+                  <EventCard key={e.id} event={e} isHappeningNow isRegistered={myEventIds.includes(e.id)} showAttendanceCount={false} />
                 ))}
               </div>
             </section>
@@ -134,23 +179,58 @@ export default async function DashboardPage() {
               </h2>
               <div className="space-y-2">
                 {startingSoon.map((e) => (
-                  <EventCard
-                    key={e.id}
-                    event={e}
-                    isRegistered={myEventIds.includes(e.id)}
-                    showAttendanceCount={false}
-                  />
+                  <EventCard key={e.id} event={e} isRegistered={myEventIds.includes(e.id)} showAttendanceCount={false} />
                 ))}
               </div>
             </section>
           )}
 
-          {/* If nothing is live or starting, show a message */}
+          {/* No live sessions message */}
           {happeningNow.length === 0 && startingSoon.length === 0 && allToday.length > 0 && (
             <div className="bg-stone-50 border border-stone-200 rounded-2xl p-6 text-center">
               <Users size={28} className="mx-auto text-stone-300 mb-2" />
               <p className="text-sm text-stone-500">No sessions live right now. Check the schedule for upcoming games.</p>
             </div>
+          )}
+
+          {/* Featured For You */}
+          {featured.length > 0 && (
+            <section>
+              <div className="flex items-center gap-2 mb-3">
+                <Star size={16} className="text-amber-500" />
+                <h2 className="text-sm font-bold text-stone-700 uppercase tracking-wide">Featured For You</h2>
+              </div>
+              <p className="text-xs text-stone-400 mb-3">Based on sessions you've attended before</p>
+              <div className="space-y-2">
+                {featured.map((e) => (
+                  <div key={e.id} className="flex overflow-hidden rounded-xl border border-stone-200 bg-white hover:shadow-md hover:border-stone-300 transition-all">
+                    <div className="w-1.5 flex-shrink-0 bg-amber-400" />
+                    <div className="flex gap-3 p-3 flex-1 min-w-0">
+                      <div className="flex-shrink-0 text-center w-14">
+                        <p className="text-xs font-bold text-amber-600 uppercase">{formatToronto(new Date(e.startTime), "EEE")}</p>
+                        <p className="text-lg font-extrabold text-stone-900 leading-tight">{formatToronto(new Date(e.startTime), "d")}</p>
+                        <p className="text-[10px] text-stone-400">{formatToronto(new Date(e.startTime), "MMM")}</p>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-stone-900 truncate">{e.title}</p>
+                        <div className="flex flex-wrap items-center gap-2 mt-1">
+                          <EventBadge type={e.type} />
+                          <span className="text-xs text-stone-400">
+                            {formatToronto(new Date(e.startTime), "HH:mm")} – {formatToronto(new Date(e.endTime), "HH:mm")}
+                          </span>
+                        </div>
+                        {e.location && (
+                          <span className="flex items-center gap-1 text-xs text-stone-400 mt-1">
+                            <MapPin size={10} />
+                            {e.location}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
           )}
         </div>
 
@@ -158,12 +238,8 @@ export default async function DashboardPage() {
         <div className="lg:col-span-2">
           <section>
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-bold text-stone-600 uppercase tracking-wide">
-                Today's Schedule
-              </h2>
-              <span className="text-xs text-stone-400 font-medium bg-stone-100 px-2 py-0.5 rounded-full">
-                {allToday.length} sessions
-              </span>
+              <h2 className="text-sm font-bold text-stone-600 uppercase tracking-wide">Today's Schedule</h2>
+              <span className="text-xs text-stone-400 font-medium bg-stone-100 px-2 py-0.5 rounded-full">{allToday.length} sessions</span>
             </div>
             {allToday.length === 0 ? (
               <div className="text-center py-10 text-stone-400 text-sm bg-white rounded-2xl border border-stone-200">
@@ -176,11 +252,7 @@ export default async function DashboardPage() {
                   const isPast = new Date(e.endTime) < new Date();
                   return (
                     <div key={e.id} className={isPast ? "opacity-40" : ""}>
-                      <EventCard
-                        event={e}
-                        isRegistered={myEventIds.includes(e.id)}
-                        showAttendanceCount={false}
-                      />
+                      <EventCard event={e} isRegistered={myEventIds.includes(e.id)} showAttendanceCount={false} />
                     </div>
                   );
                 })}
