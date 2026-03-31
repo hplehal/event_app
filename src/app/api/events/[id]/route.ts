@@ -17,13 +17,17 @@ export async function GET(
   const event = await prisma.event.findUnique({
     where: { id },
     include: {
-      _count: { select: { attendances: true } },
+      _count: { select: { attendances: true, rsvps: true } },
       host: { select: { id: true, name: true } },
       ...(hostSession
         ? {
             attendances: {
               include: { user: { select: { id: true, name: true, email: true, image: true } } },
               orderBy: { scannedAt: "asc" },
+            },
+            rsvps: {
+              include: { user: { select: { id: true, name: true, email: true, image: true } } },
+              orderBy: { createdAt: "asc" },
             },
           }
         : {}),
@@ -58,8 +62,9 @@ export async function PUT(
       startTime: data.startTime ? new Date(data.startTime) : undefined,
       endTime: data.endTime ? new Date(data.endTime) : undefined,
       location: data.location,
+      ...(data.capacity !== undefined ? { capacity: data.capacity != null ? parseInt(data.capacity, 10) : null } : {}),
     },
-    include: { _count: { select: { attendances: true } } },
+    include: { _count: { select: { attendances: true, rsvps: true } } },
   });
 
   return NextResponse.json(updated);
