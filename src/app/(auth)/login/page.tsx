@@ -2,13 +2,7 @@ import { UserLoginForm } from "@/components/auth/UserLoginForm";
 import { TitosLogo } from "@/components/brand/TitosLogo";
 import { siteConfig } from "@/lib/site-config";
 
-interface Props {
-  searchParams: Promise<{ verify?: string }>;
-}
-
-export default async function LoginPage({ searchParams }: Props) {
-  const { verify } = await searchParams;
-
+export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-950 via-amber-950/40 to-stone-950 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
@@ -27,7 +21,7 @@ export default async function LoginPage({ searchParams }: Props) {
           <p className="text-stone-500 text-sm mb-6">
             Sign in to view courts, events, and check-ins.
           </p>
-          <UserLoginForm verifyMode={verify === "1"} />
+          <UserLoginForm />
         </div>
 
         {/* Host link */}
