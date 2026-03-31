@@ -42,11 +42,11 @@ export function UserLoginForm({ verifyMode }: Props) {
   if (verifyMode || sent) {
     return (
       <div className="text-center py-6">
-        <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Mail size={24} className="text-blue-600" />
+        <div className="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Mail size={24} className="text-amber-600" />
         </div>
-        <h3 className="text-lg font-semibold text-slate-900 mb-2">Check your email</h3>
-        <p className="text-slate-500 text-sm">
+        <h3 className="text-lg font-semibold text-stone-900 mb-2">Check your email</h3>
+        <p className="text-stone-500 text-sm">
           We sent a sign-in link to <strong>{email || "your email"}</strong>.
           Click the link to continue.
         </p>
@@ -78,18 +78,18 @@ export function UserLoginForm({ verifyMode }: Props) {
 
       <div className="flex items-center gap-3">
         <Separator className="flex-1" />
-        <span className="text-xs text-slate-400">or</span>
+        <span className="text-xs text-stone-400">or</span>
         <Separator className="flex-1" />
       </div>
 
       {/* Email magic link */}
       <form onSubmit={handleEmailLogin} className="space-y-3">
         <div>
-          <Label htmlFor="email">Work Email</Label>
+          <Label htmlFor="email">Email</Label>
           <Input
             id="email"
             type="email"
-            placeholder="you@company.com"
+            placeholder="you@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={loading}

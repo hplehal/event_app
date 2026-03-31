@@ -39,36 +39,36 @@ export function EventCard({
       className={cn(
         "relative flex gap-3 p-3 rounded-xl border bg-white transition-all",
         isHappeningNow && "ring-2 ring-green-400 border-green-200",
-        isRegistered && !isHappeningNow && "border-blue-200 bg-blue-50",
-        !isHappeningNow && !isRegistered && "border-slate-200 hover:border-slate-300 hover:shadow-sm",
+        isRegistered && !isHappeningNow && "border-amber-200 bg-amber-50",
+        !isHappeningNow && !isRegistered && "border-stone-200 hover:border-stone-300 hover:shadow-sm",
         onClick && "cursor-pointer",
         className
       )}
     >
       {/* Time column */}
       <div className="flex-shrink-0 text-right w-14">
-        <p className="text-sm font-semibold text-slate-800">{start}</p>
-        <p className="text-xs text-slate-400">{end}</p>
+        <p className="text-sm font-semibold text-stone-800">{start}</p>
+        <p className="text-xs text-stone-400">{end}</p>
       </div>
 
       {/* Content */}
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
-          <p className="text-sm font-medium text-slate-900 leading-tight truncate">{event.title}</p>
+          <p className="text-sm font-medium text-stone-900 leading-tight truncate">{event.title}</p>
           {isRegistered && (
-            <CheckCircle size={16} className="flex-shrink-0 text-blue-500 mt-0.5" />
+            <CheckCircle size={16} className="flex-shrink-0 text-amber-500 mt-0.5" />
           )}
         </div>
         <div className="flex flex-wrap items-center gap-2 mt-1.5">
           <EventBadge type={event.type} />
           {event.location && (
-            <span className="flex items-center gap-1 text-xs text-slate-400">
+            <span className="flex items-center gap-1 text-xs text-stone-400">
               <MapPin size={11} />
               {event.location}
             </span>
           )}
           {showAttendanceCount && event._count !== undefined && (
-            <span className="flex items-center gap-1 text-xs text-slate-400">
+            <span className="flex items-center gap-1 text-xs text-stone-400">
               <Users size={11} />
               {event._count.attendances}
             </span>

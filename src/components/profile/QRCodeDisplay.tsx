@@ -28,7 +28,7 @@ export function QRCodeDisplay({ value, size = 200 }: QRCodeDisplayProps) {
       ctx.fillRect(0, 0, size, size);
       ctx.drawImage(img, 0, 0, size, size);
       const link = document.createElement("a");
-      link.download = "timapp-qr-code.png";
+      link.download = "titos-courts-qr-code.png";
       link.href = canvas.toDataURL("image/png");
       link.click();
     };
@@ -39,11 +39,11 @@ export function QRCodeDisplay({ value, size = 200 }: QRCodeDisplayProps) {
     <div className="flex flex-col items-center gap-4">
       <div
         ref={containerRef}
-        className="p-4 bg-white rounded-2xl border-2 border-slate-200 shadow-sm"
+        className="p-4 bg-white rounded-2xl border-2 border-stone-200 shadow-sm"
       >
         <QRCode value={value} size={size} />
       </div>
-      <p className="text-xs text-slate-400 font-mono break-all text-center max-w-xs">{value}</p>
+      <p className="text-xs text-stone-400 font-mono break-all text-center max-w-xs">{value}</p>
       <Button variant="outline" size="sm" onClick={handleDownload} className="gap-2">
         <Download size={14} />
         Download QR Code
