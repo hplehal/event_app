@@ -21,10 +21,12 @@ export function TorontoClock() {
   const date = formatToronto(toronto, "EEEE, MMM d");
 
   return (
-    <div className="flex items-center gap-2 bg-stone-950 text-white px-4 py-2.5 rounded-xl">
-      <Clock size={16} className="text-amber-400" />
+    <div className="flex items-center gap-3 bg-gradient-to-r from-stone-900 to-stone-800 text-white px-5 py-3 rounded-2xl shadow-lg shadow-stone-900/20">
+      <div className="w-9 h-9 rounded-xl bg-amber-500/20 flex items-center justify-center">
+        <Clock size={18} className="text-amber-400" />
+      </div>
       <div>
-        <p className="text-xl font-bold tabular-nums leading-none">{time}</p>
+        <p className="text-xl font-bold tabular-nums leading-none tracking-tight">{time}</p>
         <p className="text-stone-400 text-xs mt-0.5">{date} — Toronto</p>
       </div>
     </div>

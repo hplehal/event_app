@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { fromZonedTime, toZonedTime } from "date-fns-tz";
 import { TORONTO_TZ, formatToronto } from "@/lib/utils";
 import { EventBadge } from "@/components/events/EventBadge";
-import { CheckCircle, Calendar } from "lucide-react";
+import { CheckCircle, Calendar, Trophy } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +22,7 @@ async function getWeeklyAttendance(userId: string) {
   return prisma.attendance.findMany({
     where: { userId, scannedAt: { gte: weekStart, lte: weekEnd } },
     include: { event: true },
-    orderBy: { scannedAt: "asc" },
+    orderBy: { scannedAt: "desc" },
   });
 }
 
@@ -32,40 +32,44 @@ export default async function AttendancePage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 space-y-6">
+      {/* Hero summary banner */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 p-6 md:p-8 text-white">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.15)_0%,_transparent_50%)]" />
+        <div className="relative flex items-center gap-4">
+          <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+            <Trophy size={28} className="text-white" />
+          </div>
+          <div>
+            <p className="text-4xl font-extrabold leading-none">{attendances.length}</p>
+            <p className="text-amber-100 text-sm mt-1">Sessions attended this week</p>
+          </div>
+        </div>
+      </div>
+
       <div>
-        <h1 className="text-2xl font-bold text-stone-900">My Attendance</h1>
-        <p className="text-stone-500 text-sm">Sessions you attended this week</p>
+        <h1 className="text-xl font-bold text-stone-900">My Attendance</h1>
+        <p className="text-stone-500 text-sm">Your check-in history for this week</p>
       </div>
 
-      {/* Summary */}
-      <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 flex items-center gap-3">
-        <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
-          <CheckCircle size={20} className="text-amber-600" />
-        </div>
-        <div>
-          <p className="text-2xl font-bold text-amber-900">{attendances.length}</p>
-          <p className="text-sm text-amber-700">Sessions attended this week</p>
-        </div>
-      </div>
-
-      {/* List — grid on desktop */}
+      {/* List */}
       {attendances.length === 0 ? (
-        <div className="text-center py-16 text-stone-400">
-          <Calendar size={40} className="mx-auto mb-3 opacity-30" />
-          <p className="text-sm">No attendance recorded this week.</p>
+        <div className="text-center py-16 bg-white rounded-2xl border border-stone-200">
+          <Calendar size={40} className="mx-auto mb-3 text-stone-300" />
+          <p className="text-sm text-stone-400">No attendance recorded this week.</p>
+          <p className="text-xs text-stone-300 mt-1">Check in at your next court session to see it here.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {attendances.map((a) => (
             <div
               key={a.id}
-              className="bg-white border border-stone-200 rounded-xl p-4 flex items-start gap-3"
+              className="bg-white border border-stone-200 rounded-xl p-4 flex items-start gap-3 hover:shadow-md hover:border-stone-300 transition-all"
             >
-              <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                <CheckCircle size={16} className="text-green-600" />
+              <div className="w-9 h-9 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+                <CheckCircle size={18} className="text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-stone-900 truncate">{a.event.title}</p>
+                <p className="font-semibold text-stone-900 truncate">{a.event.title}</p>
                 <div className="flex flex-wrap items-center gap-2 mt-1">
                   <EventBadge type={a.event.type} />
                   <span className="text-xs text-stone-400">
@@ -74,8 +78,8 @@ export default async function AttendancePage() {
                 </div>
               </div>
               <div className="text-right flex-shrink-0">
-                <p className="text-xs text-stone-400">Scanned</p>
-                <p className="text-xs font-medium text-stone-600">
+                <p className="text-[10px] text-stone-400 uppercase tracking-wide font-medium">Scanned</p>
+                <p className="text-sm font-bold text-stone-700 tabular-nums">
                   {formatToronto(a.scannedAt, "HH:mm")}
                 </p>
               </div>
