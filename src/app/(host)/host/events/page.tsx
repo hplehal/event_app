@@ -35,7 +35,7 @@ export default function HostEventsPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState({
-    title: "", type: "MEETING", description: "", startTime: "", endTime: "", location: "",
+    title: "", type: "VOLLEYBALL", description: "", startTime: "", endTime: "", location: "",
   });
 
   useEffect(() => {
@@ -81,7 +81,7 @@ export default function HostEventsPage() {
       }
       toast.success("Event created successfully.");
       setShowCreate(false);
-      setForm({ title: "", type: "MEETING", description: "", startTime: "", endTime: "", location: "" });
+      setForm({ title: "", type: "VOLLEYBALL", description: "", startTime: "", endTime: "", location: "" });
       // Refresh
       const params = new URLSearchParams({ date: dateStr });
       if (filterType !== "ALL") params.set("type", filterType);
@@ -101,7 +101,7 @@ export default function HostEventsPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h1 className="text-2xl font-bold text-slate-900">Events</h1>
-            <p className="text-slate-500 text-sm">Manage and view scheduled events</p>
+            <p className="text-slate-500 text-sm">Manage and view court sessions</p>
           </div>
           <div className="flex gap-2">
             {/* XLSX Import stub */}
@@ -144,7 +144,7 @@ export default function HostEventsPage() {
         {/* Events list */}
         {events.length === 0 ? (
           <div className="text-center py-16 text-slate-400 text-sm">
-            No events for this date.
+            No sessions scheduled for this date.
           </div>
         ) : (
           <div className="space-y-2">
@@ -158,12 +158,12 @@ export default function HostEventsPage() {
         <Dialog open={showCreate} onOpenChange={setShowCreate}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Create New Event</DialogTitle>
+              <DialogTitle>Create New Court Session</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleCreate} className="space-y-4">
               <div>
                 <Label>Title</Label>
-                <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Event title" className="mt-1" required />
+                <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. Mixed 6s Volleyball" className="mt-1" required />
               </div>
               <div>
                 <Label>Type</Label>
@@ -189,7 +189,7 @@ export default function HostEventsPage() {
               </div>
               <div>
                 <Label>Location (optional)</Label>
-                <Input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Room, online, etc." className="mt-1" />
+                <Input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="e.g. Court 1, Main Gym" className="mt-1" />
               </div>
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={() => setShowCreate(false)}>Cancel</Button>

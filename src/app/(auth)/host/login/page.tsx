@@ -57,7 +57,7 @@ export default function HostLoginPage({ searchParams }: { searchParams: Promise<
         <div className="bg-white rounded-2xl p-6 shadow-2xl">
           <h2 className="text-lg font-semibold text-slate-900 mb-1">Host Sign In</h2>
           <p className="text-slate-500 text-sm mb-6">
-            Sign in with your host credentials to manage events and scan attendees.
+            Sign in to manage court sessions and scan players.
           </p>
 
           <form action={loginAction} className="space-y-4">

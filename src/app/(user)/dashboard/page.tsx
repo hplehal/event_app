@@ -70,14 +70,14 @@ export default async function DashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Hi, {name} 👋</h1>
-          <p className="text-slate-500 text-sm">Here's what's happening today</p>
+          <p className="text-slate-500 text-sm">Here's what's on the courts today</p>
         </div>
         <TorontoClock />
       </div>
 
       {/* Stats */}
       <StatCard
-        label="Attendances this week"
+        label="Check-ins this week"
         value={weekAttendanceCount}
         icon={CalendarCheck}
         color="blue"
@@ -109,7 +109,7 @@ export default async function DashboardPage() {
         <section>
           <h2 className="text-sm font-semibold text-blue-700 uppercase tracking-wide mb-2 flex items-center gap-2">
             <TrendingUp size={14} />
-            Starting Soon — Register Now ({startingSoon.length})
+            Starting Soon — Check In Now ({startingSoon.length})
           </h2>
           <div className="space-y-2">
             {startingSoon.map((e) => (
@@ -130,7 +130,7 @@ export default async function DashboardPage() {
           All Today ({allToday.length})
         </h2>
         {allToday.length === 0 ? (
-          <div className="text-center py-10 text-slate-400 text-sm">No events scheduled for today.</div>
+          <div className="text-center py-10 text-slate-400 text-sm">No games or sessions scheduled today.</div>
         ) : (
           <div className="space-y-2">
             {allToday.map((e) => {

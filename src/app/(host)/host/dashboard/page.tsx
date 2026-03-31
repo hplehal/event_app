@@ -53,23 +53,23 @@ export default async function HostDashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
-          <p className="text-slate-500 text-sm">Overview of all events and attendances</p>
+          <p className="text-slate-500 text-sm">Overview of all court events and player check-ins</p>
         </div>
         <TorontoClock />
       </div>
 
       {/* Stats grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Total Events" value={totalEvents} icon={CalendarDays} color="blue" />
-        <StatCard label="Total Attendances" value={totalAttendances} icon={CheckSquare} color="green" />
-        <StatCard label="Events Today" value={todayEvents} icon={TrendingUp} color="purple" />
-        <StatCard label="Attendances Today" value={todayAttendances} icon={Users} color="orange" />
+        <StatCard label="Total Sessions" value={totalEvents} icon={CalendarDays} color="blue" />
+        <StatCard label="Total Check-ins" value={totalAttendances} icon={CheckSquare} color="green" />
+        <StatCard label="Sessions Today" value={todayEvents} icon={TrendingUp} color="purple" />
+        <StatCard label="Check-ins Today" value={todayAttendances} icon={Users} color="orange" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Events */}
         <div className="bg-white border border-slate-200 rounded-xl p-5">
-          <h2 className="font-semibold text-slate-900 mb-4">Top Events by Attendance</h2>
+          <h2 className="font-semibold text-slate-900 mb-4">Most Popular Sessions</h2>
           <div className="space-y-3">
             {topEvents.map((e, i) => (
               <div key={e.id} className="flex items-center gap-3">
@@ -88,7 +88,7 @@ export default async function HostDashboardPage() {
 
         {/* Recent Attendances */}
         <div className="bg-white border border-slate-200 rounded-xl p-5">
-          <h2 className="font-semibold text-slate-900 mb-4">Recent Registrations</h2>
+          <h2 className="font-semibold text-slate-900 mb-4">Recent Check-ins</h2>
           <div className="space-y-3">
             {recentAttendances.map((a) => (
               <div key={a.id} className="flex items-center gap-3">
