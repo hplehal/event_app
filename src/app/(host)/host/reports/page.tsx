@@ -57,56 +57,53 @@ export default function ReportsPage() {
     { name: "Daily Trend", description: "Day-by-day log: sessions run, check-ins, and unique players — great for spotting trends.", icon: TrendingUp, color: "text-rose-600 bg-rose-50" },
     { name: "RSVP Log", description: "Full log of all RSVPs — who signed up, for which event, and when they RSVP'd.", icon: Ticket, color: "text-violet-600 bg-violet-50" },
     { name: "RSVP vs Attendance", description: "Compare RSVPs to actual check-ins per event — see show rates and no-shows.", icon: GitCompare, color: "text-cyan-600 bg-cyan-50" },
-    { name: "Summary", description: "High-level overview: totals, averages, RSVP show rate, busiest day/location/type.", icon: LayoutDashboard, color: "text-stone-600 bg-stone-100" },
+    { name: "Summary", description: "High-level overview: totals, averages, RSVP show rate, busiest day/location/type.", icon: LayoutDashboard, color: "text-stone-600 bg-stone-50" },
   ];
 
   return (
     <div className="max-w-3xl space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-stone-900 flex items-center gap-2">
-          <BarChart3 size={22} />
-          Reports
-        </h1>
-        <p className="text-stone-500 text-sm">Export a comprehensive attendance report as an Excel workbook</p>
+        <h1 className="text-2xl font-bold text-stone-900 tracking-tight">Reports</h1>
+        <p className="text-stone-500 text-sm mt-0.5">Export a comprehensive attendance report as an Excel workbook</p>
       </div>
 
       {/* Export form */}
-      <div className="bg-white border border-stone-200 rounded-xl p-5 space-y-5">
-        <h2 className="font-semibold text-stone-900">Date Range</h2>
+      <div className="bg-white border border-stone-200/60 rounded-2xl p-5 space-y-5">
+        <h2 className="text-xs font-bold text-stone-500 uppercase tracking-wider">Date Range</h2>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="from">From</Label>
-            <Input id="from" type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="mt-1" />
+            <Label htmlFor="from" className="text-xs text-stone-600">From</Label>
+            <Input id="from" type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="mt-1 rounded-xl" />
           </div>
           <div>
-            <Label htmlFor="to">To</Label>
-            <Input id="to" type="date" value={to} onChange={(e) => setTo(e.target.value)} className="mt-1" />
+            <Label htmlFor="to" className="text-xs text-stone-600">To</Label>
+            <Input id="to" type="date" value={to} onChange={(e) => setTo(e.target.value)} className="mt-1 rounded-xl" />
           </div>
         </div>
-        <Button onClick={handleExport} disabled={loading || !from || !to} className="gap-2 w-full">
+        <Button onClick={handleExport} disabled={loading || !from || !to} className="gap-2 w-full rounded-xl h-11">
           {loading ? <Loader2 size={15} className="animate-spin" /> : <Download size={15} />}
           {loading ? "Generating report..." : "Export Excel Report"}
         </Button>
       </div>
 
       {/* Sheets preview */}
-      <div className="bg-white border border-stone-200 rounded-xl p-5">
-        <h2 className="font-semibold text-stone-900 mb-1">Report Contents</h2>
-        <p className="text-sm text-stone-500 mb-5">
+      <div className="bg-white border border-stone-200/60 rounded-2xl p-5">
+        <h2 className="text-xs font-bold text-stone-500 uppercase tracking-wider mb-1">Report Contents</h2>
+        <p className="text-[11px] text-stone-400 mb-5">
           The exported Excel file contains {sheets.length} sheets:
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {sheets.map((sheet, i) => {
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+          {sheets.map((sheet) => {
             const Icon = sheet.icon;
             return (
-              <div key={sheet.name} className="flex gap-3 p-3 rounded-xl border border-stone-100 hover:border-stone-200 transition-colors">
-                <div className={`flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center ${sheet.color}`}>
-                  <Icon size={18} />
+              <div key={sheet.name} className="flex gap-3 p-3 rounded-xl border border-stone-100 hover:border-stone-200/60 hover:shadow-sm transition-all">
+                <div className={`flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center ${sheet.color}`}>
+                  <Icon size={16} />
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-stone-900">{sheet.name}</p>
-                  <p className="text-xs text-stone-500 leading-relaxed">{sheet.description}</p>
+                  <p className="text-[11px] text-stone-500 leading-relaxed">{sheet.description}</p>
                 </div>
               </div>
             );

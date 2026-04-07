@@ -1,80 +1,81 @@
 import { UserLoginForm } from "@/components/auth/UserLoginForm";
 import { TitosLogo } from "@/components/brand/TitosLogo";
 import { siteConfig } from "@/lib/site-config";
-import { MapPin, Trophy, Users } from "lucide-react";
+import { Zap, QrCode, CalendarCheck } from "lucide-react";
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-950 via-amber-950/40 to-stone-950 flex items-center justify-center p-4">
-      {/* Mobile: single card / Desktop: two-panel */}
-      <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-0 md:bg-white md:rounded-3xl md:overflow-hidden md:shadow-2xl md:shadow-amber-900/20">
+    <div className="min-h-screen flex">
+      {/* Left — brand showcase (desktop only) */}
+      <div className="hidden lg:flex lg:w-[55%] relative bg-stone-950 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_80%,_rgba(217,119,6,0.15)_0%,_transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_80%_20%,_rgba(245,158,11,0.08)_0%,_transparent_50%)]" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent" />
 
-        {/* Left panel — branding (desktop only, dark bg) */}
-        <div className="hidden md:flex flex-col justify-between bg-gradient-to-br from-stone-950 via-stone-900 to-amber-950/60 p-10 text-white">
+        <div className="relative z-10 flex flex-col justify-between p-12 xl:p-16 w-full">
           <div>
-            <TitosLogo size={56} />
-            <h1 className="text-3xl font-bold mt-6">{siteConfig.name}</h1>
-            <p className="text-amber-400/80 text-sm mt-2">{siteConfig.tagline}</p>
+            <div className="flex items-center gap-3 mb-16">
+              <TitosLogo size={44} />
+              <span className="text-white/90 font-semibold text-lg tracking-tight">{siteConfig.name}</span>
+            </div>
+            <h1 className="text-4xl xl:text-5xl font-extrabold text-white leading-[1.1] max-w-md">
+              Your court,<br />
+              <span className="text-amber-400">your schedule.</span>
+            </h1>
+            <p className="text-stone-400 text-base mt-4 max-w-sm leading-relaxed">
+              RSVP to sessions, check in with QR, and never miss a game.
+            </p>
           </div>
 
-          <div className="space-y-4">
-            <div className="flex items-center gap-3 text-stone-300">
-              <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center">
-                <Trophy size={18} className="text-amber-400" />
+          <div className="space-y-5 max-w-sm">
+            {[
+              { icon: CalendarCheck, title: "RSVP & Reserve", desc: "Secure your spot before it fills up" },
+              { icon: QrCode, title: "Instant Check-in", desc: "Scan your QR code at the door" },
+              { icon: Zap, title: "Live Updates", desc: "See what's happening right now" },
+            ].map(({ icon: Icon, title, desc }) => (
+              <div key={title} className="flex items-center gap-4 group">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center group-hover:bg-amber-500/20 transition-colors">
+                  <Icon size={18} className="text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-white text-sm font-medium">{title}</p>
+                  <p className="text-stone-500 text-xs">{desc}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-medium text-white">Book Court Sessions</p>
-                <p className="text-xs text-stone-400">Volleyball, basketball, tennis & more</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 text-stone-300">
-              <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center">
-                <Users size={18} className="text-amber-400" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-white">QR Check-in</p>
-                <p className="text-xs text-stone-400">Scan in and track your attendance</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 text-stone-300">
-              <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center">
-                <MapPin size={18} className="text-amber-400" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-white">Find Open Courts</p>
-                <p className="text-xs text-stone-400">See what's happening in real-time</p>
-              </div>
-            </div>
+            ))}
           </div>
 
-          <p className="text-xs text-stone-500 mt-6">
-            &copy; {new Date().getFullYear()} {siteConfig.name}
+          <p className="text-stone-600 text-xs">
+            &copy; {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
           </p>
         </div>
+      </div>
 
-        {/* Right panel — login form */}
-        <div className="flex flex-col justify-center">
-          {/* Mobile-only logo header */}
-          <div className="md:hidden text-center mb-8">
-            <div className="flex justify-center mb-4">
-              <TitosLogo size={64} />
+      {/* Right — login form */}
+      <div className="flex-1 flex items-center justify-center bg-gradient-to-b from-stone-950 via-stone-900 to-stone-950 lg:from-stone-50 lg:via-white lg:to-stone-50 p-6">
+        <div className="w-full max-w-sm">
+          {/* Mobile logo */}
+          <div className="lg:hidden text-center mb-10">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 shadow-lg shadow-amber-500/25 mb-5">
+              <TitosLogo size={36} />
             </div>
             <h1 className="text-2xl font-bold text-white">{siteConfig.name}</h1>
-            <p className="text-amber-400/70 text-sm mt-1">{siteConfig.tagline}</p>
+            <p className="text-stone-400 text-sm mt-1">{siteConfig.tagline}</p>
           </div>
 
-          <div className="bg-white rounded-2xl md:rounded-none p-8 md:p-10 shadow-2xl md:shadow-none">
-            <h2 className="text-xl font-bold text-stone-900 mb-1">Welcome back</h2>
-            <p className="text-stone-500 text-sm mb-8">
-              Sign in to view courts, events, and check-ins.
-            </p>
+          <div className="bg-white rounded-3xl p-8 shadow-xl shadow-black/5 lg:shadow-lg border border-stone-200/60">
+            <div className="mb-7">
+              <h2 className="text-xl font-bold text-stone-900">Welcome back</h2>
+              <p className="text-stone-500 text-sm mt-1">Sign in to access your courts and events.</p>
+            </div>
+
             <UserLoginForm />
 
-            <div className="mt-8 pt-6 border-t border-stone-100">
-              <p className="text-center text-stone-400 text-sm">
-                Are you a host?{" "}
-                <a href="/host/login" className="text-amber-600 hover:text-amber-500 font-medium">
-                  Host sign in →
+            <div className="mt-8 pt-5 border-t border-stone-100 text-center">
+              <p className="text-stone-400 text-sm">
+                Court manager?{" "}
+                <a href="/host/login" className="text-amber-600 hover:text-amber-700 font-semibold transition-colors">
+                  Host login
                 </a>
               </p>
             </div>

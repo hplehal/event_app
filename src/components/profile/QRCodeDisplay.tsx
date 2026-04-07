@@ -39,7 +39,7 @@ export function QRCodeDisplay({ value, size = 200 }: QRCodeDisplayProps) {
     <div className="flex flex-col items-center gap-4">
       <div
         ref={containerRef}
-        className="p-5 bg-white rounded-2xl border-2 border-stone-100 shadow-[0_4px_24px_rgba(0,0,0,0.06)] relative"
+        className="p-5 bg-white rounded-2xl border border-stone-200/60 shadow-sm relative"
       >
         {/* Corner accents */}
         <div className="absolute top-2 left-2 w-4 h-4 border-l-2 border-t-2 border-amber-400 rounded-tl-md" />
@@ -48,8 +48,8 @@ export function QRCodeDisplay({ value, size = 200 }: QRCodeDisplayProps) {
         <div className="absolute bottom-2 right-2 w-4 h-4 border-r-2 border-b-2 border-amber-400 rounded-br-md" />
         <QRCode value={value} size={size} />
       </div>
-      <Button variant="outline" size="sm" onClick={handleDownload} className="gap-2 rounded-xl">
-        <Download size={14} />
+      <Button variant="outline" size="sm" onClick={handleDownload} className="gap-2 rounded-xl text-xs">
+        <Download size={13} />
         Save QR Code
       </Button>
     </div>

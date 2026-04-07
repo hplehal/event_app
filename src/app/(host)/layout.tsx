@@ -13,9 +13,11 @@ export default async function HostLayout({ children }: { children: React.ReactNo
   if (!host) redirect("/host/login");
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-stone-50/50">
       <HostSidebar hostName={host.name} hostEmail={host.email} />
-      <main className="md:ml-64 min-h-screen pt-14 md:pt-0 pb-16 md:pb-0 p-4 md:p-6">{children}</main>
+      <main className="md:ml-64 min-h-screen pt-14 md:pt-0 pb-16 md:pb-0 p-4 md:p-6">
+        <div className="max-w-6xl mx-auto">{children}</div>
+      </main>
     </div>
   );
 }

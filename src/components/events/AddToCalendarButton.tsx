@@ -50,14 +50,14 @@ export function AddToCalendarButton({ event }: AddToCalendarButtonProps) {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((o) => !o)}
-        className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 transition-colors"
+        className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-xl bg-stone-50 text-stone-600 border border-stone-200/60 hover:bg-stone-100 hover:text-stone-800 transition-colors"
       >
-        <CalendarPlus size={15} />
-        Add to Calendar
+        <CalendarPlus size={13} />
+        Calendar
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-1 left-0 w-56 bg-white border border-stone-200 rounded-xl shadow-lg overflow-hidden">
+        <div className="absolute z-50 mt-1.5 left-0 w-52 bg-white border border-stone-200/60 rounded-2xl shadow-lg shadow-stone-200/40 overflow-hidden">
           <button
             onClick={handleGoogle}
             className="flex items-center gap-3 w-full px-4 py-3 text-sm text-stone-700 hover:bg-stone-50 transition-colors text-left"
@@ -69,10 +69,10 @@ export function AddToCalendarButton({ event }: AddToCalendarButtonProps) {
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
             </svg>
             <div>
-              <p className="font-medium">Google Calendar</p>
-              <p className="text-xs text-stone-400">Opens in new tab</p>
+              <p className="font-medium text-xs">Google Calendar</p>
+              <p className="text-[10px] text-stone-400">Opens in new tab</p>
             </div>
-            <ExternalLink size={12} className="ml-auto text-stone-300" />
+            <ExternalLink size={10} className="ml-auto text-stone-300" />
           </button>
 
           <div className="border-t border-stone-100" />
@@ -81,12 +81,12 @@ export function AddToCalendarButton({ event }: AddToCalendarButtonProps) {
             onClick={handleICS}
             className="flex items-center gap-3 w-full px-4 py-3 text-sm text-stone-700 hover:bg-stone-50 transition-colors text-left"
           >
-            <CalendarPlus size={16} className="flex-shrink-0 text-stone-500" />
+            <CalendarPlus size={16} className="flex-shrink-0 text-stone-400" />
             <div>
-              <p className="font-medium">Apple / Outlook</p>
-              <p className="text-xs text-stone-400">Download .ics file</p>
+              <p className="font-medium text-xs">Apple / Outlook</p>
+              <p className="text-[10px] text-stone-400">Download .ics file</p>
             </div>
-            <Download size={12} className="ml-auto text-stone-300" />
+            <Download size={10} className="ml-auto text-stone-300" />
           </button>
         </div>
       )}

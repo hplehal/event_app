@@ -75,7 +75,6 @@ export default function ScanPage() {
         const data = await res.json();
         if (res.ok) {
           setResult({ type: "success", message: "Attendance registered!", user: data.user, event: data.event });
-          // Refresh event counts
           const toronto = toZonedTime(new Date(), TORONTO_TZ);
           const dateStr = format(toronto, "yyyy-MM-dd");
           fetch(`/api/events?date=${dateStr}`).then((r) => r.json()).then(setEvents);
@@ -95,20 +94,26 @@ export default function ScanPage() {
 
   return (
     <div className="max-w-lg space-y-3">
-      {/* Event selector — compact pill, expands to list */}
-      <div className="bg-white border border-stone-200 rounded-xl overflow-hidden">
+      {/* Page header */}
+      <div className="mb-1">
+        <h1 className="text-2xl font-bold text-stone-900 tracking-tight">Scan</h1>
+        <p className="text-stone-500 text-sm mt-0.5">Check in players for today's sessions</p>
+      </div>
+
+      {/* Event selector */}
+      <div className="bg-white border border-stone-200/60 rounded-2xl overflow-hidden">
         <button
           onClick={() => setShowEventList((v) => !v)}
-          className="w-full flex items-center justify-between px-4 py-3 text-left"
+          className="w-full flex items-center justify-between px-4 py-3.5 text-left"
         >
           <div className="min-w-0 flex-1">
             {selectedEvent ? (
               <>
-                <p className="text-xs text-stone-500 mb-0.5">Scanning for</p>
+                <p className="text-[10px] text-stone-400 font-medium uppercase tracking-wider mb-0.5">Scanning for</p>
                 <p className="font-semibold text-stone-900 text-sm truncate">
                   {selectedEvent.title.split(" - ")[0]}
                 </p>
-                <p className="text-xs text-stone-400">
+                <p className="text-[11px] text-stone-400 mt-0.5">
                   {formatToronto(new Date(selectedEvent.startTime), "HH:mm")}–
                   {formatToronto(new Date(selectedEvent.endTime), "HH:mm")}
                   {selectedEvent.location ? ` · ${selectedEvent.location}` : ""}
@@ -118,25 +123,25 @@ export default function ScanPage() {
               <p className="text-stone-400 text-sm">Tap to select an event</p>
             )}
           </div>
-          {/* Seat availability badge */}
+          {/* Seat availability */}
           {selectedEvent?._count && (
-            <div className="flex flex-col items-end gap-0.5 shrink-0 mr-1">
-              <div className="flex items-center gap-1 text-xs text-stone-500">
-                <Users size={11} />
+            <div className="flex flex-col items-end gap-0.5 shrink-0 mr-2">
+              <div className="flex items-center gap-1 text-[11px] text-stone-500">
+                <Users size={10} />
                 {selectedEvent._count.attendances} in
               </div>
-              <div className="flex items-center gap-1 text-xs text-stone-500">
-                <Ticket size={11} />
+              <div className="flex items-center gap-1 text-[11px] text-stone-500">
+                <Ticket size={10} />
                 {selectedEvent._count.rsvps} RSVP
               </div>
               {selectedEvent.capacity != null && (() => {
                 const spotsLeft = selectedEvent.capacity! - selectedEvent._count!.attendances;
                 return (
                   <span className={cn(
-                    "text-[10px] font-bold px-1.5 py-0.5 rounded-full",
-                    spotsLeft <= 0 ? "bg-red-100 text-red-700" :
-                    spotsLeft <= 3 ? "bg-amber-100 text-amber-700" :
-                    "bg-emerald-100 text-emerald-700"
+                    "text-[10px] font-bold px-1.5 py-0.5 rounded-md",
+                    spotsLeft <= 0 ? "bg-red-50 text-red-600" :
+                    spotsLeft <= 3 ? "bg-amber-50 text-amber-600" :
+                    "bg-emerald-50 text-emerald-600"
                   )}>
                     {spotsLeft <= 0 ? "FULL" : `${spotsLeft} left`}
                   </span>
@@ -144,15 +149,15 @@ export default function ScanPage() {
               })()}
             </div>
           )}
-          <div className="flex items-center gap-2 shrink-0 ml-3">
+          <div className="flex items-center gap-2 shrink-0 ml-1">
             {selectedEvent && <EventBadge type={selectedEvent.type} />}
-            <ChevronDown size={16} className={cn("text-stone-400 transition-transform", showEventList && "rotate-180")} />
+            <ChevronDown size={14} className={cn("text-stone-400 transition-transform", showEventList && "rotate-180")} />
           </div>
         </button>
 
         {/* Expandable event list */}
         {showEventList && (
-          <div className="border-t border-stone-100 max-h-52 overflow-y-auto">
+          <div className="border-t border-stone-100 max-h-52 overflow-y-auto scrollbar-thin">
             {events.length === 0 ? (
               <p className="text-center py-6 text-stone-400 text-sm">No events today</p>
             ) : (
@@ -163,8 +168,8 @@ export default function ScanPage() {
                     key={e.id}
                     onClick={() => { setSelectedEventId(e.id); setShowEventList(false); }}
                     className={cn(
-                      "w-full text-left px-4 py-2.5 flex items-center justify-between gap-2 hover:bg-stone-50 border-b border-stone-50 last:border-0",
-                      selectedEventId === e.id && "bg-amber-50"
+                      "w-full text-left px-4 py-2.5 flex items-center justify-between gap-2 hover:bg-stone-50 border-b border-stone-50 last:border-0 transition-colors",
+                      selectedEventId === e.id && "bg-amber-50/50"
                     )}
                   >
                     <div className="min-w-0 flex-1">
@@ -180,8 +185,8 @@ export default function ScanPage() {
                       )}
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      {isNow && <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />}
-                      <span className="text-xs text-stone-500">{formatToronto(new Date(e.startTime), "HH:mm")}</span>
+                      {isNow && <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />}
+                      <span className="text-[11px] text-stone-400 tabular-nums">{formatToronto(new Date(e.startTime), "HH:mm")}</span>
                       <EventBadge type={e.type} />
                     </div>
                   </button>
@@ -203,25 +208,25 @@ export default function ScanPage() {
         />
       )}
 
-      {/* Scanner — always visible */}
-      <div className="bg-white border border-stone-200 rounded-xl p-4">
+      {/* Scanner */}
+      <div className="bg-white border border-stone-200/60 rounded-2xl p-4">
         <Tabs defaultValue="camera">
-          <TabsList className="mb-3 w-full">
-            <TabsTrigger value="camera" className="flex-1 gap-1.5">
-              <Camera size={14} /> Camera
+          <TabsList className="mb-3 w-full rounded-xl">
+            <TabsTrigger value="camera" className="flex-1 gap-1.5 rounded-lg text-xs">
+              <Camera size={13} /> Camera
             </TabsTrigger>
-            <TabsTrigger value="manual" className="flex-1 gap-1.5">
-              <Keyboard size={14} /> Manual
+            <TabsTrigger value="manual" className="flex-1 gap-1.5 rounded-lg text-xs">
+              <Keyboard size={13} /> Manual
             </TabsTrigger>
           </TabsList>
           <TabsContent value="camera">
             {selectedEventId ? (
               <QRScanner onScan={handleScan} active={!scanning} />
             ) : (
-              <div className="flex items-center justify-center h-48 text-stone-400 text-sm border border-dashed border-stone-200 rounded-lg">
+              <div className="flex items-center justify-center h-48 text-stone-400 text-sm border border-dashed border-stone-200/60 rounded-xl">
                 <div className="text-center">
-                  <ScanLine size={32} className="mx-auto mb-2 opacity-30" />
-                  Select an event above
+                  <ScanLine size={28} className="mx-auto mb-2 opacity-30" />
+                  <p className="text-xs">Select an event above</p>
                 </div>
               </div>
             )}
@@ -229,12 +234,11 @@ export default function ScanPage() {
           <TabsContent value="manual">
             <ManualCodeInput onScan={handleScan} disabled={scanning || !selectedEventId} />
             {!selectedEventId && (
-              <p className="text-xs text-stone-400 mt-2">Select an event above to enable</p>
+              <p className="text-[11px] text-stone-400 mt-2">Select an event above to enable</p>
             )}
           </TabsContent>
         </Tabs>
       </div>
-
     </div>
   );
 }

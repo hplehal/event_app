@@ -65,11 +65,8 @@ async function getDashboardData(userId: string) {
   return { allToday, happeningNow, startingSoon, myEventIds, myRsvpIds, weekAttendanceCount, totalSessions };
 }
 
-/** Find upcoming events that match the user's most attended event types and locations. */
 async function getFeaturedEvents(userId: string) {
   const nowUTC = new Date();
-
-  // Get user's past attendances to find preferences
   const pastAttendances = await prisma.attendance.findMany({
     where: { userId },
     include: { event: { select: { type: true, location: true, title: true } } },
@@ -79,7 +76,6 @@ async function getFeaturedEvents(userId: string) {
 
   if (pastAttendances.length === 0) return [];
 
-  // Count type frequency
   const typeCounts: Record<string, number> = {};
   const locationCounts: Record<string, number> = {};
   const titleCounts: Record<string, number> = {};
@@ -88,18 +84,15 @@ async function getFeaturedEvents(userId: string) {
     if (a.event.location) {
       locationCounts[a.event.location] = (locationCounts[a.event.location] ?? 0) + 1;
     }
-    // Normalize title (strip time suffix like "- 18:30")
     const baseTitle = a.event.title.replace(/\s*-\s*\d{2}:\d{2}$/, "").trim();
     titleCounts[baseTitle] = (titleCounts[baseTitle] ?? 0) + 1;
   }
 
-  // Top types and locations the user frequents
   const topTypes = Object.entries(typeCounts)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 3)
     .map(([type]) => type);
 
-  // Fetch upcoming events matching their preferred types
   const upcoming = await prisma.event.findMany({
     where: {
       startTime: { gt: nowUTC },
@@ -110,17 +103,12 @@ async function getFeaturedEvents(userId: string) {
     take: 20,
   });
 
-  // Score each event: type match + location match + title match
   const scored = upcoming.map((e) => {
     let score = 0;
     score += (typeCounts[e.type] ?? 0) * 2;
-    if (e.location && locationCounts[e.location]) {
-      score += locationCounts[e.location];
-    }
+    if (e.location && locationCounts[e.location]) score += locationCounts[e.location];
     const baseTitle = e.title.replace(/\s*-\s*\d{2}:\d{2}$/, "").trim();
-    if (titleCounts[baseTitle]) {
-      score += titleCounts[baseTitle] * 3; // strong signal — same recurring session
-    }
+    if (titleCounts[baseTitle]) score += titleCounts[baseTitle] * 3;
     return { event: e, score };
   });
 
@@ -138,41 +126,38 @@ export default async function DashboardPage() {
   const { allToday, happeningNow, startingSoon, myEventIds, myRsvpIds, weekAttendanceCount, totalSessions } = dashData;
 
   const name = session!.user.name?.split(" ")[0] ?? "there";
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
-      {/* Hero welcome banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-stone-900 via-stone-800 to-amber-900/40 p-6 md:p-8 text-white">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(245,166,35,0.15)_0%,_transparent_60%)]" />
-        <div className="relative">
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Hi, {name}</h1>
-          <p className="text-stone-300 text-sm mt-1">Here's what's on the courts today</p>
-        </div>
+    <div className="px-4 md:px-6 py-6 space-y-6">
+      {/* Welcome */}
+      <div>
+        <h1 className="text-2xl font-bold text-stone-900 tracking-tight">{greeting}, {name}</h1>
+        <p className="text-stone-500 text-sm mt-0.5">Here's what's happening on the courts today.</p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
         <StatCard label="Check-ins this week" value={weekAttendanceCount} icon={CalendarCheck} color="amber" />
         <StatCard label="Sessions today" value={totalSessions} icon={CalendarDays} color="emerald" />
         <StatCard label="Live right now" value={happeningNow.length} icon={Flame} color="orange" className="col-span-2 lg:col-span-1" />
       </div>
 
-      {/* Desktop: two-column layout / Mobile: stacked */}
+      {/* Two-column layout */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        {/* Left column — main events feed */}
-        <div className="lg:col-span-3 space-y-6">
+        {/* Left — live events + featured */}
+        <div className="lg:col-span-3 space-y-5">
           {/* Happening Now */}
           {happeningNow.length > 0 && (
-            <section className="bg-green-50/50 border border-green-200 rounded-2xl p-4">
-              <h2 className="text-sm font-bold text-green-700 uppercase tracking-wide mb-3 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                Happening Now ({happeningNow.length})
+            <section>
+              <h2 className="text-xs font-bold text-green-600 uppercase tracking-wider mb-2.5 flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                Happening Now
               </h2>
               <div className="space-y-2">
                 {happeningNow.map((e) => (
-                  <div key={e.id} className="flex flex-col gap-1">
-                    <EventCard event={e} isHappeningNow isRegistered={myEventIds.includes(e.id)} isRsvped={myRsvpIds.includes(e.id)} showAttendanceCount={false} />
-                  </div>
+                  <EventCard key={e.id} event={e} isHappeningNow isRegistered={myEventIds.includes(e.id)} isRsvped={myRsvpIds.includes(e.id)} />
                 ))}
               </div>
             </section>
@@ -180,16 +165,16 @@ export default async function DashboardPage() {
 
           {/* Starting Soon */}
           {startingSoon.length > 0 && (
-            <section className="bg-amber-50/50 border border-amber-200 rounded-2xl p-4">
-              <h2 className="text-sm font-bold text-amber-700 uppercase tracking-wide mb-3 flex items-center gap-2">
-                <TrendingUp size={14} />
-                Starting Soon ({startingSoon.length})
+            <section>
+              <h2 className="text-xs font-bold text-amber-600 uppercase tracking-wider mb-2.5 flex items-center gap-2">
+                <TrendingUp size={13} />
+                Starting Soon
               </h2>
               <div className="space-y-2">
                 {startingSoon.map((e) => (
                   <div key={e.id} className="flex items-center gap-2">
                     <div className="flex-1 min-w-0">
-                      <EventCard event={e} isRegistered={myEventIds.includes(e.id)} isRsvped={myRsvpIds.includes(e.id)} showAttendanceCount={false} />
+                      <EventCard event={e} isRegistered={myEventIds.includes(e.id)} isRsvped={myRsvpIds.includes(e.id)} />
                     </div>
                     <RsvpButton eventId={e.id} initialRsvped={myRsvpIds.includes(e.id)} initialCount={e._count.rsvps} capacity={e.capacity} />
                   </div>
@@ -198,11 +183,14 @@ export default async function DashboardPage() {
             </section>
           )}
 
-          {/* No live sessions message */}
+          {/* Empty state */}
           {happeningNow.length === 0 && startingSoon.length === 0 && allToday.length > 0 && (
-            <div className="bg-stone-50 border border-stone-200 rounded-2xl p-6 text-center">
-              <Users size={28} className="mx-auto text-stone-300 mb-2" />
-              <p className="text-sm text-stone-500">No sessions live right now. Check the schedule for upcoming games.</p>
+            <div className="bg-white border border-stone-200/60 rounded-2xl p-8 text-center">
+              <div className="w-12 h-12 rounded-2xl bg-stone-100 flex items-center justify-center mx-auto mb-3">
+                <Users size={22} className="text-stone-400" />
+              </div>
+              <p className="text-sm text-stone-500 font-medium">No sessions live right now</p>
+              <p className="text-xs text-stone-400 mt-1">Check the schedule below for upcoming games.</p>
             </div>
           )}
 
@@ -210,39 +198,36 @@ export default async function DashboardPage() {
           <FeaturedEvents events={featured} rsvpIds={myRsvpIds} />
         </div>
 
-        {/* Right column — today's schedule */}
+        {/* Right — today's schedule */}
         <div className="lg:col-span-2">
-          <section>
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-bold text-stone-600 uppercase tracking-wide">Today's Schedule</h2>
-              <span className="text-xs text-stone-400 font-medium bg-stone-100 px-2 py-0.5 rounded-full">{allToday.length} sessions</span>
+          <div className="flex items-center justify-between mb-2.5">
+            <h2 className="text-xs font-bold text-stone-500 uppercase tracking-wider">Today's Schedule</h2>
+            <span className="text-[11px] text-stone-400 font-medium bg-stone-100 px-2 py-0.5 rounded-full tabular-nums">{allToday.length}</span>
+          </div>
+          {allToday.length === 0 ? (
+            <div className="text-center py-12 text-stone-400 text-sm bg-white rounded-2xl border border-stone-200/60">
+              <CalendarDays size={28} className="mx-auto mb-2 opacity-30" />
+              No sessions today.
             </div>
-            {allToday.length === 0 ? (
-              <div className="text-center py-10 text-stone-400 text-sm bg-white rounded-2xl border border-stone-200">
-                <CalendarDays size={32} className="mx-auto mb-2 opacity-30" />
-                No games or sessions scheduled today.
-              </div>
-            ) : (
-              <div className="space-y-2 lg:max-h-[calc(100vh-280px)] lg:overflow-y-auto lg:pr-1">
-                {allToday.map((e) => {
-                  const isPast = new Date(e.endTime) < new Date();
-                  const isFuture = new Date(e.startTime) > new Date();
-                  return (
-                    <div key={e.id} className={isPast ? "opacity-40" : ""}>
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1 min-w-0">
-                          <EventCard event={e} isRegistered={myEventIds.includes(e.id)} isRsvped={myRsvpIds.includes(e.id)} showAttendanceCount={false} />
-                        </div>
-                        {!isPast && (
-                          <RsvpButton eventId={e.id} initialRsvped={myRsvpIds.includes(e.id)} initialCount={e._count.rsvps} capacity={e.capacity} eventEnded={isPast} />
-                        )}
+          ) : (
+            <div className="space-y-2 lg:max-h-[calc(100vh-260px)] lg:overflow-y-auto scrollbar-thin lg:pr-1">
+              {allToday.map((e) => {
+                const isPast = new Date(e.endTime) < new Date();
+                return (
+                  <div key={e.id} className={isPast ? "opacity-35 hover:opacity-60 transition-opacity" : ""}>
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 min-w-0">
+                        <EventCard event={e} isRegistered={myEventIds.includes(e.id)} isRsvped={myRsvpIds.includes(e.id)} />
                       </div>
+                      {!isPast && (
+                        <RsvpButton eventId={e.id} initialRsvped={myRsvpIds.includes(e.id)} initialCount={e._count.rsvps} capacity={e.capacity} />
+                      )}
                     </div>
-                  );
-                })}
-              </div>
-            )}
-          </section>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </div>
