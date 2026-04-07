@@ -54,69 +54,77 @@ export function EventCard({
     <div
       onClick={onClick}
       className={cn(
-        "relative flex overflow-hidden rounded-xl border bg-white transition-all group",
-        isHappeningNow && "ring-2 ring-green-400 border-green-200",
-        isRegistered && !isHappeningNow && "border-amber-200 bg-amber-50/50",
-        !isHappeningNow && !isRegistered && "border-stone-200 hover:border-stone-300 hover:shadow-md",
+        "relative flex overflow-hidden rounded-2xl border bg-white transition-all duration-200 group",
+        isHappeningNow && "ring-2 ring-green-400/60 border-green-200 shadow-sm shadow-green-100",
+        isRegistered && !isHappeningNow && "border-emerald-200 bg-emerald-50/30",
+        isRsvped && !isRegistered && !isHappeningNow && "border-amber-200 bg-amber-50/30",
+        !isHappeningNow && !isRegistered && !isRsvped && "border-stone-200/60 hover:border-stone-300 hover:shadow-md hover:shadow-stone-100",
         onClick && "cursor-pointer",
         className
       )}
     >
       {/* Color accent bar */}
-      <div className={cn("w-1.5 flex-shrink-0", accent)} />
+      <div className={cn("w-1 flex-shrink-0 rounded-l-2xl", accent)} />
 
       {/* Content */}
-      <div className="flex gap-3 p-3 flex-1 min-w-0">
+      <div className="flex gap-3 p-3.5 flex-1 min-w-0">
         {/* Time column */}
-        <div className="flex-shrink-0 text-right w-14">
-          <p className="text-sm font-bold text-stone-800">{start}</p>
-          <p className="text-xs text-stone-400">{end}</p>
+        <div className="flex-shrink-0 text-right w-12">
+          <p className="text-sm font-bold text-stone-800 tabular-nums">{start}</p>
+          <p className="text-[11px] text-stone-400 tabular-nums">{end}</p>
         </div>
+
+        {/* Divider */}
+        <div className="w-px bg-stone-100 self-stretch my-0.5" />
 
         {/* Details */}
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <p className="text-sm font-semibold text-stone-900 leading-tight truncate">{event.title}</p>
-            <div className="flex items-center gap-1 flex-shrink-0 mt-0.5">
+            <div className="flex items-center gap-1 flex-shrink-0">
               {isRsvped && !isRegistered && (
-                <CalendarCheck size={15} className="text-amber-500" />
+                <div className="w-5 h-5 rounded-full bg-amber-100 flex items-center justify-center">
+                  <CalendarCheck size={12} className="text-amber-600" />
+                </div>
               )}
               {isRegistered && (
-                <CheckCircle size={15} className="text-green-500" />
+                <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center">
+                  <CheckCircle size={12} className="text-emerald-600" />
+                </div>
               )}
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2 mt-1.5">
+          <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
             <EventBadge type={event.type} />
             {event.location && (
-              <span className="flex items-center gap-1 text-xs text-stone-400">
-                <MapPin size={11} />
+              <span className="flex items-center gap-1 text-[11px] text-stone-400">
+                <MapPin size={10} />
                 {event.location}
               </span>
             )}
             {showAttendanceCount && event._count !== undefined && (
-              <span className="flex items-center gap-1 text-xs text-stone-400">
-                <Users size={11} />
+              <span className="flex items-center gap-1 text-[11px] text-stone-400">
+                <Users size={10} />
                 {event._count.attendances}
               </span>
             )}
             {showRsvpCount && event._count?.rsvps != null && (
-              <span className="flex items-center gap-1 text-xs text-stone-400">
-                <Ticket size={11} />
+              <span className="flex items-center gap-1 text-[11px] text-stone-400">
+                <Ticket size={10} />
                 {event._count.rsvps}{event.capacity ? `/${event.capacity}` : ""}
               </span>
             )}
             {!showRsvpCount && event.capacity != null && (
-              <span className="flex items-center gap-1 text-xs text-stone-400">
-                <Ticket size={11} />
+              <span className="flex items-center gap-1 text-[11px] text-stone-400">
+                <Ticket size={10} />
                 {event.capacity} spots
               </span>
             )}
           </div>
           {isHappeningNow && (
-            <span className="inline-flex items-center gap-1 mt-1.5 text-xs font-semibold text-green-700 bg-green-100 px-2 py-0.5 rounded-full">
+            <span className="inline-flex items-center gap-1.5 mt-2 text-[11px] font-semibold text-green-700 bg-green-100 px-2.5 py-0.5 rounded-full">
               <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-              Live
+              Live Now
             </span>
           )}
         </div>

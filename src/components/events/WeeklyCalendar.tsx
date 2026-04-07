@@ -27,25 +27,25 @@ const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const HOURS = Array.from({ length: 14 }, (_, i) => i + 8); // 8–21
 
 const TYPE_COLORS: Record<string, string> = {
-  VOLLEYBALL:  "bg-amber-100 text-amber-800 hover:bg-amber-200",
-  BASKETBALL:  "bg-orange-100 text-orange-800 hover:bg-orange-200",
-  TENNIS:      "bg-emerald-100 text-emerald-800 hover:bg-emerald-200",
-  SOCCER:      "bg-sky-100 text-sky-800 hover:bg-sky-200",
-  TOURNAMENT:  "bg-red-100 text-red-800 hover:bg-red-200",
-  LEAGUE:      "bg-purple-100 text-purple-800 hover:bg-purple-200",
-  OPEN_COURT:  "bg-teal-100 text-teal-800 hover:bg-teal-200",
-  OTHER:       "bg-stone-100 text-stone-700 hover:bg-stone-200",
+  VOLLEYBALL:  "bg-amber-50 text-amber-800 hover:bg-amber-100 border-l-2 border-l-amber-400",
+  BASKETBALL:  "bg-orange-50 text-orange-800 hover:bg-orange-100 border-l-2 border-l-orange-400",
+  TENNIS:      "bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border-l-2 border-l-emerald-400",
+  SOCCER:      "bg-sky-50 text-sky-800 hover:bg-sky-100 border-l-2 border-l-sky-400",
+  TOURNAMENT:  "bg-red-50 text-red-800 hover:bg-red-100 border-l-2 border-l-red-400",
+  LEAGUE:      "bg-purple-50 text-purple-800 hover:bg-purple-100 border-l-2 border-l-purple-400",
+  OPEN_COURT:  "bg-teal-50 text-teal-800 hover:bg-teal-100 border-l-2 border-l-teal-400",
+  OTHER:       "bg-stone-50 text-stone-700 hover:bg-stone-100 border-l-2 border-l-stone-400",
 };
 
 const REGISTERED_COLORS: Record<string, string> = {
-  VOLLEYBALL:  "bg-amber-500 text-white hover:bg-amber-600",
-  BASKETBALL:  "bg-orange-500 text-white hover:bg-orange-600",
-  TENNIS:      "bg-emerald-500 text-white hover:bg-emerald-600",
-  SOCCER:      "bg-sky-500 text-white hover:bg-sky-600",
-  TOURNAMENT:  "bg-red-500 text-white hover:bg-red-600",
-  LEAGUE:      "bg-purple-500 text-white hover:bg-purple-600",
-  OPEN_COURT:  "bg-teal-500 text-white hover:bg-teal-600",
-  OTHER:       "bg-stone-500 text-white hover:bg-stone-600",
+  VOLLEYBALL:  "bg-amber-500 text-white hover:bg-amber-600 border-l-2 border-l-amber-700",
+  BASKETBALL:  "bg-orange-500 text-white hover:bg-orange-600 border-l-2 border-l-orange-700",
+  TENNIS:      "bg-emerald-500 text-white hover:bg-emerald-600 border-l-2 border-l-emerald-700",
+  SOCCER:      "bg-sky-500 text-white hover:bg-sky-600 border-l-2 border-l-sky-700",
+  TOURNAMENT:  "bg-red-500 text-white hover:bg-red-600 border-l-2 border-l-red-700",
+  LEAGUE:      "bg-purple-500 text-white hover:bg-purple-600 border-l-2 border-l-purple-700",
+  OPEN_COURT:  "bg-teal-500 text-white hover:bg-teal-600 border-l-2 border-l-teal-700",
+  OTHER:       "bg-stone-500 text-white hover:bg-stone-600 border-l-2 border-l-stone-700",
 };
 
 export function WeeklyCalendar({ events, myAttendanceEventIds = [], onEventClick }: WeeklyCalendarProps) {
@@ -73,34 +73,34 @@ export function WeeklyCalendar({ events, myAttendanceEventIds = [], onEventClick
   return (
     <div className="flex flex-col gap-3">
       {/* Week navigation */}
-      <div className="flex items-center justify-between">
-        <Button variant="outline" size="icon" onClick={() => setWeekOffset((o) => o - 1)}>
+      <div className="flex items-center justify-between bg-white border border-stone-200/60 rounded-2xl px-4 py-2.5">
+        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl" onClick={() => setWeekOffset((o) => o - 1)}>
           <ChevronLeft size={16} />
         </Button>
-        <p className="text-sm font-medium text-stone-700">{weekLabel}</p>
-        <Button variant="outline" size="icon" onClick={() => setWeekOffset((o) => o + 1)}>
+        <p className="text-sm font-semibold text-stone-700">{weekLabel}</p>
+        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl" onClick={() => setWeekOffset((o) => o + 1)}>
           <ChevronRight size={16} />
         </Button>
       </div>
 
-      {/* Calendar grid — horizontal scroll on mobile */}
-      <div className="overflow-x-auto rounded-xl border border-stone-200 bg-white">
+      {/* Calendar grid */}
+      <div className="overflow-x-auto rounded-2xl border border-stone-200/60 bg-white">
         <div className="min-w-[640px]">
           {/* Header row */}
-          <div className="grid grid-cols-7 border-b border-stone-200">
-            <div className="p-2 text-xs text-stone-400 font-medium bg-white" />
+          <div className="grid grid-cols-7 border-b border-stone-200/60">
+            <div className="p-2 text-xs text-stone-400 font-medium bg-stone-50/50" />
             {days.map((day, i) => {
               const isToday =
                 day.getFullYear() === now.getFullYear() &&
                 day.getMonth() === now.getMonth() &&
                 day.getDate() === now.getDate();
               return (
-                <div key={i} className={`p-2 text-center ${isToday ? "bg-amber-50" : "bg-white"}`}>
-                  <p className={`text-xs font-semibold uppercase tracking-wide ${isToday ? "text-amber-600" : "text-stone-400"}`}>
+                <div key={i} className={`p-2.5 text-center ${isToday ? "bg-amber-50/50" : "bg-stone-50/50"}`}>
+                  <p className={`text-[10px] font-bold uppercase tracking-wider ${isToday ? "text-amber-600" : "text-stone-400"}`}>
                     {DAY_NAMES[i]}
                   </p>
                   <p className={`text-lg font-bold mt-0.5 w-8 h-8 flex items-center justify-center mx-auto rounded-full ${
-                    isToday ? "bg-amber-600 text-white" : "text-stone-800"
+                    isToday ? "bg-amber-500 text-white" : "text-stone-800"
                   }`}>
                     {format(day, "d")}
                   </p>
@@ -111,8 +111,8 @@ export function WeeklyCalendar({ events, myAttendanceEventIds = [], onEventClick
 
           {/* Hour rows */}
           {HOURS.map((hour) => (
-            <div key={hour} className="grid grid-cols-7 border-b border-stone-100 last:border-0">
-              <div className="p-1.5 text-xs text-stone-400 font-medium text-right pr-2 self-start pt-2">
+            <div key={hour} className="grid grid-cols-7 border-b border-stone-100/80 last:border-0">
+              <div className="p-1.5 text-[10px] text-stone-400 font-medium text-right pr-2.5 self-start pt-2 tabular-nums">
                 {hour.toString().padStart(2, "0")}:00
               </div>
               {days.map((day, i) => {
@@ -122,7 +122,7 @@ export function WeeklyCalendar({ events, myAttendanceEventIds = [], onEventClick
                   day.getDate() === now.getDate();
                 const dayEvents = getEventsForDayHour(day, hour);
                 return (
-                  <div key={i} className={`p-1 min-h-[52px] flex flex-col gap-0.5 border-l border-stone-100 ${isToday ? "bg-amber-50/40" : ""}`}>
+                  <div key={i} className={`p-1 min-h-[52px] flex flex-col gap-0.5 border-l border-stone-100/80 ${isToday ? "bg-amber-50/20" : ""}`}>
                     {dayEvents.map((e) => {
                       const registered = myAttendanceEventIds.includes(e.id);
                       const colorClass = registered
@@ -132,7 +132,7 @@ export function WeeklyCalendar({ events, myAttendanceEventIds = [], onEventClick
                         <button
                           key={e.id}
                           onClick={() => onEventClick?.(e)}
-                          className={`text-left text-xs rounded px-1.5 py-1 truncate w-full transition-colors font-medium ${colorClass}`}
+                          className={`text-left text-[11px] rounded-lg px-1.5 py-1 truncate w-full transition-colors font-medium ${colorClass}`}
                           title={e.title}
                         >
                           {e.title.split(" - ")[0]}
@@ -148,15 +148,15 @@ export function WeeklyCalendar({ events, myAttendanceEventIds = [], onEventClick
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap gap-2 text-xs text-stone-500">
-        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-amber-100 border border-amber-200" />Volleyball</span>
-        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-orange-100 border border-orange-200" />Basketball</span>
-        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-emerald-100 border border-emerald-200" />Tennis</span>
-        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-sky-100 border border-sky-200" />Soccer</span>
-        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-red-100 border border-red-200" />Tournament</span>
-        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-purple-100 border border-purple-200" />League</span>
-        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-teal-100 border border-teal-200" />Open Court</span>
-        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-amber-500" />Checked In</span>
+      <div className="flex flex-wrap gap-2.5 text-[11px] text-stone-500">
+        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-amber-100 border border-amber-200/60" />Volleyball</span>
+        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-orange-100 border border-orange-200/60" />Basketball</span>
+        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-emerald-100 border border-emerald-200/60" />Tennis</span>
+        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-sky-100 border border-sky-200/60" />Soccer</span>
+        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-red-100 border border-red-200/60" />Tournament</span>
+        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-purple-100 border border-purple-200/60" />League</span>
+        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-teal-100 border border-teal-200/60" />Open Court</span>
+        <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-amber-500" />Checked In</span>
       </div>
     </div>
   );

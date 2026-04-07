@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { EventBadge } from "@/components/events/EventBadge";
 import { AddToCalendarButton } from "@/components/events/AddToCalendarButton";
 import { RsvpButton } from "@/components/events/RsvpButton";
-import { MapPin, Clock, Users, Ticket } from "lucide-react";
+import { MapPin, Clock, Users, Ticket, CalendarDays } from "lucide-react";
 import { formatToronto, TORONTO_TZ } from "@/lib/utils";
 import { toZonedTime } from "date-fns-tz";
 import { format, startOfWeek, addDays } from "date-fns";
@@ -47,10 +47,13 @@ export default function CalendarPage() {
   }, [weekOffset]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6 space-y-4">
+    <div className="px-4 md:px-6 py-6 space-y-5">
       <div>
-        <h1 className="text-2xl font-bold text-stone-900">Calendar</h1>
-        <p className="text-stone-500 text-sm">Weekly view of all court sessions and events</p>
+        <h1 className="text-2xl font-bold text-stone-900 tracking-tight flex items-center gap-2">
+          <CalendarDays size={22} className="text-amber-500" />
+          Calendar
+        </h1>
+        <p className="text-stone-500 text-sm mt-0.5">Weekly view of all court sessions and events</p>
       </div>
 
       <WeeklyCalendar
@@ -62,7 +65,7 @@ export default function CalendarPage() {
       {/* Event detail dialog */}
       <Dialog open={!!selectedEvent} onOpenChange={() => setSelectedEvent(null)}>
         {selectedEvent && (
-          <DialogContent className="sm:max-w-md">
+          <DialogContent className="sm:max-w-md rounded-2xl">
             <DialogHeader>
               <DialogTitle className="flex items-start gap-2 pr-4">
                 <span className="leading-tight">{selectedEvent.title.split(" - ")[0]}</span>
@@ -72,33 +75,45 @@ export default function CalendarPage() {
               <div className="flex flex-wrap gap-2">
                 <EventBadge type={selectedEvent.type} />
                 {myAttendanceIds.includes(selectedEvent.id) && (
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
                     Checked In
                   </span>
                 )}
               </div>
               <div className="flex items-center gap-2 text-sm text-stone-600">
-                <Clock size={14} />
+                <div className="w-7 h-7 rounded-lg bg-stone-100 flex items-center justify-center">
+                  <Clock size={13} className="text-stone-500" />
+                </div>
                 {formatToronto(new Date(selectedEvent.startTime), "EEEE, MMM d · HH:mm")} –{" "}
                 {formatToronto(new Date(selectedEvent.endTime), "HH:mm")}
               </div>
               {selectedEvent.location && (
                 <div className="flex items-center gap-2 text-sm text-stone-600">
-                  <MapPin size={14} />
+                  <div className="w-7 h-7 rounded-lg bg-stone-100 flex items-center justify-center">
+                    <MapPin size={13} className="text-stone-500" />
+                  </div>
                   {selectedEvent.location}
                 </div>
               )}
-              <div className="flex items-center gap-2 text-sm text-stone-600">
-                <Users size={14} />
-                {selectedEvent._count.attendances} checked in
-              </div>
-              <div className="flex items-center gap-2 text-sm text-stone-600">
-                <Ticket size={14} />
-                {selectedEvent._count.rsvps} RSVP'd
-                {selectedEvent.capacity && ` / ${selectedEvent.capacity} spots`}
+              <div className="flex items-center gap-4 text-sm text-stone-600">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
+                    <Users size={13} className="text-emerald-600" />
+                  </div>
+                  <span>{selectedEvent._count.attendances} checked in</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-purple-50 flex items-center justify-center">
+                    <Ticket size={13} className="text-purple-600" />
+                  </div>
+                  <span>
+                    {selectedEvent._count.rsvps} RSVP'd
+                    {selectedEvent.capacity && ` / ${selectedEvent.capacity}`}
+                  </span>
+                </div>
               </div>
 
-              <div className="pt-2 border-t border-stone-100 flex items-center gap-2">
+              <div className="pt-3 border-t border-stone-100 flex items-center gap-2">
                 <RsvpButton
                   eventId={selectedEvent.id}
                   initialRsvped={myRsvpIds.includes(selectedEvent.id)}

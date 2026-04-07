@@ -11,42 +11,46 @@ interface StatCardProps {
 
 const colorMap = {
   amber: {
-    card: "border-amber-100",
-    iconBg: "bg-gradient-to-br from-amber-400 to-amber-600",
-    text: "text-amber-600",
+    iconBg: "bg-amber-500/10",
+    icon: "text-amber-500",
+    ring: "ring-amber-500/5",
   },
   emerald: {
-    card: "border-emerald-100",
-    iconBg: "bg-gradient-to-br from-emerald-400 to-emerald-600",
-    text: "text-emerald-600",
+    iconBg: "bg-emerald-500/10",
+    icon: "text-emerald-500",
+    ring: "ring-emerald-500/5",
   },
   purple: {
-    card: "border-purple-100",
-    iconBg: "bg-gradient-to-br from-purple-400 to-purple-600",
-    text: "text-purple-600",
+    iconBg: "bg-purple-500/10",
+    icon: "text-purple-500",
+    ring: "ring-purple-500/5",
   },
   orange: {
-    card: "border-orange-100",
-    iconBg: "bg-gradient-to-br from-orange-400 to-orange-600",
-    text: "text-orange-600",
+    iconBg: "bg-orange-500/10",
+    icon: "text-orange-500",
+    ring: "ring-orange-500/5",
   },
   sky: {
-    card: "border-sky-100",
-    iconBg: "bg-gradient-to-br from-sky-400 to-sky-600",
-    text: "text-sky-600",
+    iconBg: "bg-sky-500/10",
+    icon: "text-sky-500",
+    ring: "ring-sky-500/5",
   },
 };
 
 export function StatCard({ label, value, icon: Icon, color = "amber", className }: StatCardProps) {
   const c = colorMap[color];
   return (
-    <div className={cn("bg-white border rounded-2xl p-5 flex items-center gap-4 hover:shadow-md transition-shadow", c.card, className)}>
-      <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center shadow-sm", c.iconBg)}>
-        <Icon size={22} className="text-white" />
+    <div className={cn(
+      "bg-white border border-stone-200/60 rounded-2xl p-5 flex items-center gap-4 ring-1 hover:shadow-lg hover:shadow-stone-200/50 transition-all duration-300",
+      c.ring,
+      className
+    )}>
+      <div className={cn("w-11 h-11 rounded-xl flex items-center justify-center", c.iconBg)}>
+        <Icon size={20} className={c.icon} strokeWidth={2} />
       </div>
       <div>
-        <p className="text-3xl font-extrabold text-stone-900 leading-none">{value}</p>
-        <p className="text-sm text-stone-500 mt-0.5">{label}</p>
+        <p className="text-2xl font-bold text-stone-900 leading-none tracking-tight">{value}</p>
+        <p className="text-xs text-stone-500 mt-1 font-medium">{label}</p>
       </div>
     </div>
   );
